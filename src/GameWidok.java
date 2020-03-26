@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 
 public class GameWidok extends JFrame {
 
@@ -7,14 +6,15 @@ public class GameWidok extends JFrame {
 
     public GameWidok(){
         setLayout(null);
-        setVisible(true);
         setSize(700,700);
         setLocation(500,250);
 
         jButton = new JButton("Return");
         jButton.setBounds(100,100,60,20);
         jButton.addActionListener(e -> {
-            new StartWidok();
+            dispose();
+            StartWidok.rankingMap.put(StartWidok.nickname, 1000);
+            new StartWidok().setVisible(true);
         });
         add(jButton);
     }

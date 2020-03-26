@@ -1,10 +1,3 @@
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import sun.audio.AudioData;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
-import sun.audio.ContinuousAudioDataStream;
-
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -13,15 +6,22 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class StartWidok extends JFrame {
-    Map<String, Integer> rankingMap = new HashMap<>();
+    static Map<String, Integer> rankingMap = new HashMap<>();
+    static String nickname;
     private JLabel jLabel;
     private JLabel jLabel1;
     private JLabel jLabel2;
     private JButton buttonStart;
     private JButton buttonRanking;
+    private Clip clip;
+
 
     public StartWidok(){
         setLayout(null);
+        setVisible(true);
+        setLocation(500,250);
+        setSize(800,600);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         music();
         Font font = new Font("Verdana", Font.BOLD,24);
@@ -40,9 +40,11 @@ public class StartWidok extends JFrame {
         buttonRanking.setBounds(350, 300,100,20);
 
         buttonStart.addActionListener(e -> {
-            String nickname = JOptionPane.showInputDialog("Enter nickname");
+            nickname = JOptionPane.showInputDialog("Enter nickname");
             rankingMap.put(nickname, 0);
-            new GameWidok();
+            dispose();
+            clip.stop();
+            new GameWidok().setVisible(true);
         });
 
         buttonRanking.addActionListener(e -> {
@@ -71,7 +73,7 @@ public class StartWidok extends JFrame {
     private void music(){
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("imperial_march.wav").getAbsoluteFile());
-            Clip clip = AudioSystem.getClip();
+            clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
