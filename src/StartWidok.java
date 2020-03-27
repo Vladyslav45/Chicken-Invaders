@@ -28,16 +28,28 @@ public class StartWidok extends JFrame {
         jLabel = new JLabel("CHICKEN");
         jLabel1 = new JLabel("INVADERS");
         jLabel2 = new JLabel("chicken strike back");
-        buttonStart = new JButton("Start");
-        buttonRanking = new JButton("Ranking");
+        buttonStart = new JButton();
+        buttonRanking = new JButton();
 
 
-        jLabel.setBounds(350,100,150,20);
+        jLabel.setBounds(300,30,150,20);
         jLabel.setFont(font);
-        jLabel1.setBounds(350,120,70,20);
-        jLabel2.setBounds(350,200,120,10);
-        buttonStart.setBounds(350,250,80,20);
-        buttonRanking.setBounds(350, 300,100,20);
+
+        jLabel1.setBounds(300,60,70,20);
+
+        jLabel2.setBounds(300,100,120,10);
+
+        buttonStart.setBounds(200,150,200,200);
+        buttonStart.setIcon(new ImageIcon("image\\play.png"));
+        buttonStart.setOpaque(false);
+        buttonStart.setContentAreaFilled(false);
+        buttonStart.setBorderPainted(false);
+
+        buttonRanking.setBounds(400, 150,200,200);
+        buttonRanking.setIcon(new ImageIcon("image\\rank.png"));
+        buttonRanking.setOpaque(false);
+        buttonRanking.setContentAreaFilled(false);
+        buttonRanking.setBorderPainted(false);
 
         buttonStart.addActionListener(e -> {
             nickname = JOptionPane.showInputDialog("Enter nickname");
@@ -72,7 +84,7 @@ public class StartWidok extends JFrame {
 
     private void music(){
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("imperial_march.wav").getAbsoluteFile());
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\imperial_march.wav").getAbsoluteFile());
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.loop(Clip.LOOP_CONTINUOUSLY);
