@@ -1,4 +1,7 @@
+import javax.sound.sampled.*;
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 
 public class GameWidok extends JFrame {
 
@@ -6,6 +9,7 @@ public class GameWidok extends JFrame {
     private JButton resumeButton;
     private JButton closeButton;
     private Timer timer;
+    private Clip clip;
 
     public GameWidok(){
         setLayout(null);
@@ -19,7 +23,7 @@ public class GameWidok extends JFrame {
         });
         timer.start();
 
-
+        melodyOfTheGame();
         jButton = new JButton();
         jButton.setIcon(new ImageIcon("image\\pause.png"));
         jButton.setOpaque(false);
@@ -48,6 +52,7 @@ public class GameWidok extends JFrame {
             closeButton.setBorderPainted(false);
             closeButton.addActionListener(c -> {
                 dispose();
+                clip.stop();
                 StartWidok.rankingMap.put(StartWidok.nickname, 1000);
                 new StartWidok().setVisible(true);
             });
@@ -60,5 +65,16 @@ public class GameWidok extends JFrame {
             jDialog.setVisible(true);
         });
         add(jButton);
+    }
+
+    private void melodyOfTheGame() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\muzyka rozpoczynająca rozgrywkę.wav").getAbsoluteFile());
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException d) {
+            d.printStackTrace();
+        }
     }
 }

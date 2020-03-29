@@ -1,6 +1,5 @@
 import javax.sound.sampled.*;
 import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,7 +25,7 @@ public class StartWidok extends JFrame {
         buttonStart = new JButton();
         buttonRanking = new JButton();
 
-        JLabel background = new JLabel(new ImageIcon("C:\\Users\\dawid\\OneDrive\\Pulpit\\Projekt\\Chicken-Invaders\\image\\tlo.jpg"));
+        JLabel background = new JLabel(new ImageIcon("image\\tlo.jpg"));
         background.setOpaque(true);
         background.setBounds(0, -10, 800, 600);
         add(background);
@@ -48,7 +47,6 @@ public class StartWidok extends JFrame {
             rankingMap.put(nickname, 0);
             clip.stop();
             musicAttack();
-            melodyOfTheGame();
             dispose();
             new GameWidok().setVisible(true);
         });
@@ -95,17 +93,6 @@ public class StartWidok extends JFrame {
             clip.start();
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException s) {
             s.printStackTrace();
-        }
-    }
-
-    private void melodyOfTheGame() {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("C:\\Users\\dawid\\OneDrive\\Pulpit\\Projekt\\Chicken-Invaders\\music\\muzyka rozpoczynająca rozgrywkę.wav").getAbsoluteFile());
-            clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException d) {
-            d.printStackTrace();
         }
     }
 }
