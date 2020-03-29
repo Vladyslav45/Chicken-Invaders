@@ -57,6 +57,7 @@ public class StartWidok extends JFrame {
             dispose();
             clip.stop();
             new GameWidok().setVisible(true);
+
         });
 
         buttonRanking.addActionListener(e -> {
