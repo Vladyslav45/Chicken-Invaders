@@ -8,9 +8,7 @@ import java.util.stream.Collectors;
 public class StartWidok extends JFrame {
     static Map<String, Integer> rankingMap = new HashMap<>();
     static String nickname;
-    private JLabel jLabel;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
+
     private JButton buttonStart;
     private JButton buttonRanking;
     private Clip clip;
@@ -24,28 +22,22 @@ public class StartWidok extends JFrame {
         setIconImage(new ImageIcon("image\\chicken.png").getImage());
 
         music();
-        Font font = new Font("Verdana", Font.BOLD,24);
-        jLabel = new JLabel("CHICKEN");
-        jLabel1 = new JLabel("INVADERS");
-        jLabel2 = new JLabel("chicken strike back");
+
         buttonStart = new JButton();
         buttonRanking = new JButton();
 
+        JLabel background = new JLabel(new ImageIcon("C:\\Users\\dawid\\OneDrive\\Pulpit\\Projekt\\Chicken-Invaders\\image\\tlo.jpg"));
+        background.setOpaque(true);
+        background.setBounds(0, -10, 800, 600);
+        add(background);
 
-        jLabel.setBounds(300,30,150,20);
-        jLabel.setFont(font);
-
-        jLabel1.setBounds(300,60,70,20);
-
-        jLabel2.setBounds(300,100,120,10);
-
-        buttonStart.setBounds(200,150,200,200);
+        buttonStart.setBounds(200,300,200,200);
         buttonStart.setIcon(new ImageIcon("image\\play.png"));
         buttonStart.setOpaque(false);
         buttonStart.setContentAreaFilled(false);
         buttonStart.setBorderPainted(false);
 
-        buttonRanking.setBounds(400, 150,200,200);
+        buttonRanking.setBounds(400, 300,200,200);
         buttonRanking.setIcon(new ImageIcon("image\\rank.png"));
         buttonRanking.setOpaque(false);
         buttonRanking.setContentAreaFilled(false);
@@ -77,11 +69,10 @@ public class StartWidok extends JFrame {
             jDialog.setVisible(true);
         });
 
-        add(jLabel);
-        add(jLabel1);
-        add(jLabel2);
+
         add(buttonStart);
         add(buttonRanking);
+        add(background);
     }
 
     private void music(){
