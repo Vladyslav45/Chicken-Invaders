@@ -1,18 +1,21 @@
+import javax.sound.sampled.*;
 import javax.swing.*;
-import java.awt.*;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 
-public class GameWidok extends JFrame implements KeyListener {
+public class GameWidok extends JFrame {
 
-    private JButton jButton;
+    private JButton pauseButton;
     private JButton resumeButton;
     private JButton closeButton;
     private Timer timer;
+    private Clip clip;
     Ship ship = new Ship();
+
     public GameWidok(){
-        //setLayout(null);
-        addKeyListener(this);
+        addKeyListener(new keyPressPleyer());
         setFocusable(true);
         setSize(700,700);
         setLocation(500,150);
@@ -24,14 +27,14 @@ public class GameWidok extends JFrame implements KeyListener {
         });
         timer.start();
 
-
-        jButton = new JButton();
-        jButton.setIcon(new ImageIcon("image\\pause.png"));
-        jButton.setOpaque(false);
-        jButton.setContentAreaFilled(false);
-        jButton.setBorderPainted(false);
-        jButton.setBounds(620,5,60,60);
-        jButton.addActionListener(e -> {
+        musicOfTheGame();
+        pauseButton = new JButton();
+        pauseButton.setIcon(new ImageIcon("image\\pause.png"));
+        pauseButton.setOpaque(false);
+        pauseButton.setContentAreaFilled(false);
+        pauseButton.setBorderPainted(false);
+        pauseButton.setBounds(620,5,60,60);
+        pauseButton.addActionListener(e -> {
             timer.stop();
             JDialog jDialog = new JDialog(this, "Pause", true);
             resumeButton = new JButton();
@@ -53,6 +56,7 @@ public class GameWidok extends JFrame implements KeyListener {
             closeButton.setBorderPainted(false);
             closeButton.addActionListener(c -> {
                 dispose();
+                clip.stop();
                 StartWidok.rankingMap.put(StartWidok.nickname, 1000);
                 new StartWidok().setVisible(true);
             });
@@ -61,44 +65,43 @@ public class GameWidok extends JFrame implements KeyListener {
             jDialog.add(closeButton);
             jDialog.add(resumeButton);
             jDialog.setSize(200,120);
-            jDialog.setLocation(500, 250);
+            jDialog.setLocation(500, 150);
             jDialog.setVisible(true);
         });
-        add(jButton);
-
-        getContentPane().add(ship);
-
+        add(pauseButton);
+        add(ship);
     }
 
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
+    public class keyPressPleyer extends KeyAdapter{
+        @Override
+        public void keyPressed(KeyEvent e) {
+            int code = e.getKeyCode();
+            if(code == KeyEvent.VK_LEFT && ship.wspx+20 > 0){
+                ship.wspx -=10;
+            }
+            if(code == KeyEvent.VK_RIGHT && ship.wspx+65 < getWidth()){
+                ship.wspx +=10;
+            }
+            if(code == KeyEvent.VK_UP && ship.wspy > 0){
+                ship.wspy -=10;
+            }
+            if(code == KeyEvent.VK_DOWN && ship.wspy+100 < getHeight()) {
+                ship.wspy +=10;
+            }
+            invalidate();
+            validate();
+            repaint();
+        }
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        int code = e.getKeyCode();
-        if(code == KeyEvent.VK_LEFT && ship.wspx+20 > 0){
-            ship.wspx -=5;
+    private void musicOfTheGame() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\muzyka rozpoczynająca rozgrywkę.wav").getAbsoluteFile());
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException s) {
+            s.printStackTrace();
         }
-        if(code == KeyEvent.VK_RIGHT && ship.wspx+65 < getWidth()){
-            ship.wspx +=5;
-        }
-        if(code == KeyEvent.VK_UP && ship.wspy > 0){
-            ship.wspy -=5;
-        }
-        if(code == KeyEvent.VK_DOWN && ship.wspy+100 < getHeight()) {
-            ship.wspy +=5;
-        }
-        invalidate();
-        validate();
-        repaint();
-    }
-
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
     }
 }
