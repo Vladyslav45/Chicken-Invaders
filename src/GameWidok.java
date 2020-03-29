@@ -11,6 +11,7 @@ public class GameWidok extends JFrame {
         setLayout(null);
         setSize(700,700);
         setLocation(500,250);
+        setIconImage(new ImageIcon("image\\chicken.png").getImage());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         timer = new Timer(100, e -> {

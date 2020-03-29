@@ -15,13 +15,13 @@ public class StartWidok extends JFrame {
     private JButton buttonRanking;
     private Clip clip;
 
-
     public StartWidok(){
         setLayout(null);
         setVisible(true);
         setLocation(500,250);
         setSize(800,600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setIconImage(new ImageIcon("image\\chicken.png").getImage());
 
         music();
         Font font = new Font("Verdana", Font.BOLD,24);
@@ -54,8 +54,9 @@ public class StartWidok extends JFrame {
         buttonStart.addActionListener(e -> {
             nickname = JOptionPane.showInputDialog("Enter nickname");
             rankingMap.put(nickname, 0);
-            dispose();
             clip.stop();
+            musicAttack();
+            dispose();
             new GameWidok().setVisible(true);
         });
 
@@ -69,6 +70,7 @@ public class StartWidok extends JFrame {
                 jTable.setValueAt(sort.get(key), row, 1);
                 row++;
             }
+            jDialog.setIconImage(new ImageIcon("image\\rank1.png").getImage());
             jDialog.add(jTable);
             jDialog.setSize(300,500);
             jDialog.setLocation(1000,250);
@@ -90,6 +92,17 @@ public class StartWidok extends JFrame {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void musicAttack(){
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\chicken2.wav").getAbsoluteFile());
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException s) {
+            s.printStackTrace();
         }
     }
 }
