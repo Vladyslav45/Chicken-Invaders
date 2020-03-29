@@ -103,7 +103,7 @@ public class StartWidok extends JFrame {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("C:\\Users\\dawid\\OneDrive\\Pulpit\\Projekt\\Chicken-Invaders\\music\\muzyka rozpoczynająca rozgrywkę.wav").getAbsoluteFile());
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
-            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException d) {
             d.printStackTrace();
         }
