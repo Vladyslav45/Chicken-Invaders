@@ -29,5 +29,5 @@ public class Ship extends JPanel {
         g.drawImage(image,wspx,wspy,70,70,this);
     }
 
-    
+
 }
