@@ -1,42 +1,46 @@
 import javax.sound.sampled.*;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 
-public class GameWidok extends JFrame {
-
+public class GameWidok extends JPanel implements ActionListener {
     private JButton pauseButton;
     private JButton resumeButton;
     private JButton closeButton;
     private Timer timer;
     private Clip clip;
-    Ship ship = new Ship();
+    private Ship ship;
+    private ChickensMapGenerator chickensMapGenerator;
+    public static Chicken[][] chickenList;
 
     public GameWidok(){
-        addKeyListener(new keyPressPleyer());
+        addKeyListener(new keyPressPlayer());
         setFocusable(true);
-        setSize(700,700);
-        setLocation(500,150);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setLayout(null);
+        setBackground(Color.black);
 
 
-        timer = new Timer(100, e -> {
-            //TODO implementation game this
-        });
+        timer = new Timer(600, this);
         timer.start();
 
+        gameInit();
         musicOfTheGame();
+        chickensMapGenerator = new ChickensMapGenerator();
         pauseButton = new JButton();
         pauseButton.setIcon(new ImageIcon("image\\pause.png"));
         pauseButton.setOpaque(false);
         pauseButton.setContentAreaFilled(false);
         pauseButton.setBorderPainted(false);
-        pauseButton.setBounds(620,5,60,60);
+        pauseButton.setBounds(920,5,60,60);
         pauseButton.addActionListener(e -> {
             timer.stop();
-            JDialog jDialog = new JDialog(this, "Pause", true);
+            JFrame frameForDialog = new JFrame();
+            JDialog jDialog = new JDialog(frameForDialog, "Pause", true);
             resumeButton = new JButton();
             resumeButton.setBounds(10, 10, 60,60);
             resumeButton.setIcon(new ImageIcon("image\\resume.png"));
@@ -55,7 +59,8 @@ public class GameWidok extends JFrame {
             closeButton.setContentAreaFilled(false);
             closeButton.setBorderPainted(false);
             closeButton.addActionListener(c -> {
-                dispose();
+                frameForDialog.dispose();
+                SwingUtilities.windowForComponent(this).dispose();
                 clip.stop();
                 StartWidok.rankingMap.put(StartWidok.nickname, 1000);
                 new StartWidok().setVisible(true);
@@ -65,14 +70,46 @@ public class GameWidok extends JFrame {
             jDialog.add(closeButton);
             jDialog.add(resumeButton);
             jDialog.setSize(200,120);
-            jDialog.setLocation(500, 150);
+            jDialog.setLocationRelativeTo(null);
             jDialog.setVisible(true);
         });
         add(pauseButton);
-        add(ship);
     }
 
-    public class keyPressPleyer extends KeyAdapter{
+    private void gameInit(){
+        chickenList = new Chicken[5][11];
+        for (int i = 0; i < chickenList.length; i++){
+            for (int j = 0; j < chickenList[i].length; j++){
+                chickenList[i][j] = new Chicken(200 + j * 50, 80 + i * 40);
+            }
+        }
+        ship = new Ship();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        chickensMapGenerator.draw(g);
+        g.drawImage(ship.image, ship.wspx, ship.wspy, 70,70,this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        for (int i = 0; i < chickenList.length; i++){
+            for (int j = 0; j < chickenList[i].length; j++){
+                chickenList[i][j].move();
+            }
+        }
+
+        chickenList[0][0].checkBoard();
+        chickenList[5-1][11-1].checkBoard();
+
+        repaint(); revalidate();
+    }
+
+    public class keyPressPlayer extends KeyAdapter{
+
         @Override
         public void keyPressed(KeyEvent e) {
             int code = e.getKeyCode();
@@ -85,7 +122,7 @@ public class GameWidok extends JFrame {
             if(code == KeyEvent.VK_UP && ship.wspy > 0){
                 ship.wspy -=10;
             }
-            if(code == KeyEvent.VK_DOWN && ship.wspy+100 < getHeight()) {
+            if(code == KeyEvent.VK_DOWN && ship.wspy+70 < getHeight()) {
                 ship.wspy +=10;
             }
             invalidate();

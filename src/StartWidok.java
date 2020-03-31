@@ -18,7 +18,8 @@ public class StartWidok extends JFrame {
         setLocation(500, 250);
         setSize(800, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setIconImage(new ImageIcon("image\\chicken.png").getImage());
+        setLocationRelativeTo(null);
+        setIconImage(new ImageIcon("image\\chicken0.png").getImage());
 
         music();
 
@@ -28,7 +29,6 @@ public class StartWidok extends JFrame {
         JLabel background = new JLabel(new ImageIcon("image\\tlo.jpg"));
         background.setOpaque(true);
         background.setBounds(0, -10, 800, 600);
-        add(background);
 
         buttonStart.setBounds(200, 300, 200, 200);
         buttonStart.setIcon(new ImageIcon("image\\play.png"));
@@ -48,8 +48,7 @@ public class StartWidok extends JFrame {
             clip.stop();
             musicAttack();
             dispose();
-            new GameWidok().setVisible(true);
-
+            new GameWindow().setVisible(true);
         });
 
         buttonRanking.addActionListener(e -> {
@@ -57,6 +56,7 @@ public class StartWidok extends JFrame {
             JDialog jDialog = new JDialog(this, "Ranking");
             Map<String, Integer> sort = rankingMap.entrySet().stream().sorted(((o1, o2) -> o2.getValue().compareTo(o1.getValue()))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o1, o2) -> o1, LinkedHashMap::new));
             JTable jTable = new JTable(sort.size(), 2);
+            jTable.setEnabled(false);
             for (String key : sort.keySet()) {
                 jTable.setValueAt(key, row, 0);
                 jTable.setValueAt(sort.get(key), row, 1);
@@ -65,7 +65,7 @@ public class StartWidok extends JFrame {
             jDialog.setIconImage(new ImageIcon("image\\rank1.png").getImage());
             jDialog.add(jTable);
             jDialog.setSize(300, 500);
-            jDialog.setLocation(1000, 250);
+            jDialog.setLocationRelativeTo(null);
             jDialog.setVisible(true);
         });
 
