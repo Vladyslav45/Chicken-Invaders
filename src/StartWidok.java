@@ -19,6 +19,7 @@ public class StartWidok extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setTitle("Chicken Invaders");
         setIconImage(new ImageIcon("image\\chicken0.png").getImage());
 
         music();

@@ -22,8 +22,6 @@ public class GameWidok extends JPanel implements ActionListener {
         addKeyListener(new keyPressPlayer());
         setFocusable(true);
         setLayout(null);
-        setBackground(Color.black);
-
 
         timer = new Timer(600, this);
         timer.start();
@@ -89,6 +87,7 @@ public class GameWidok extends JPanel implements ActionListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.drawImage(new ImageIcon("image\\tloGry.jpg").getImage(), 0,0, 1000,800, this);
         chickensMapGenerator.draw(g);
         g.drawImage(ship.image, ship.wspx, ship.wspy, 70,70,this);
     }
