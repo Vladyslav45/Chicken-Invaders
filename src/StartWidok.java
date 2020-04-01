@@ -7,12 +7,15 @@ import java.util.stream.Collectors;
 public class StartWidok extends JFrame {
     static Map<String, Integer> rankingMap = new HashMap<>();
     static String nickname;
+    static String nickwarning;
 
     private JButton buttonStart;
     private JButton buttonRanking;
     private Clip clip;
 
+
     public StartWidok() {
+        final int[] check = {-1};
         setLayout(null);
         setVisible(true);
         setLocation(500, 250);
@@ -44,7 +47,16 @@ public class StartWidok extends JFrame {
         buttonRanking.setBorderPainted(false);
 
         buttonStart.addActionListener(e -> {
-            nickname = JOptionPane.showInputDialog("Enter nickname");
+
+            while (check[0] < 0) {
+                nickname = JOptionPane.showInputDialog("Enter nickname");
+                if (nickname.length() > 0) {
+                    check[0]++;
+                } else {
+                    JOptionPane.showMessageDialog(null, "You didn't enter a nickname");
+                }
+            }
+
             rankingMap.put(nickname, 0);
             clip.stop();
             musicAttack();
