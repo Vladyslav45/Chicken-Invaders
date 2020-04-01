@@ -11,7 +11,7 @@ public class Chicken {
     public static BufferedImage image1;
     public static BufferedImage image2;
 
-    public Chicken(int posX, int posY){
+    public Chicken(int posX, int posY) {
 
         this.posX = posX;
         this.posY = posY;
@@ -38,12 +38,19 @@ public class Chicken {
         return posY;
     }
 
-    public void move(){
+    public void move() {
         posX += go;
+        posY += 1;
     }
 
-    public void checkBoard(){
-       if (posX < 20) go = 10;
-       else if (posX > 940) go =- 10;
+    public void checkBoard() {
+        if (posX < 20) {
+            go = 10;
+        } else if (posX > 940) {
+            go = -10;
+
+
+        }
+
     }
 }
