@@ -16,14 +16,15 @@ public class GameWidok extends JPanel implements ActionListener {
     private Clip clip;
     private Ship ship;
     private ChickensMapGenerator chickensMapGenerator;
-    public static Chicken[][] chickenList;
+    private Shot shot;
+    static Chicken[][] chickenList;
 
     public GameWidok(){
         addKeyListener(new keyPressPlayer());
         setFocusable(true);
         setLayout(null);
 
-        timer = new Timer(600, this);
+        timer = new Timer(200, this);
         timer.start();
 
         gameInit();
@@ -82,6 +83,7 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
         ship = new Ship();
+        shot = new Shot();
     }
 
     @Override
@@ -90,6 +92,9 @@ public class GameWidok extends JPanel implements ActionListener {
         g.drawImage(new ImageIcon("image\\tloGry.jpg").getImage(), 0,0, 1000,800, this);
         chickensMapGenerator.draw(g);
         g.drawImage(ship.image, ship.wspx, ship.wspy, 70,70,this);
+        if (shot.isVisible()){
+            g.drawImage(shot.img, shot.posX, shot.posY, 10,30, this);
+        }
     }
 
     @Override
@@ -102,7 +107,13 @@ public class GameWidok extends JPanel implements ActionListener {
         }
 
         chickenList[0][0].checkBoard();
-        chickenList[5-1][11-1].checkBoard();
+        chickenList[4][10].checkBoard();
+
+        if (shot.isVisible() && shot.posY > 0){
+            shot.move();
+        } else {
+            shot.setVisible(false);
+        }
 
         repaint(); revalidate();
     }
@@ -123,6 +134,12 @@ public class GameWidok extends JPanel implements ActionListener {
             }
             if(code == KeyEvent.VK_DOWN && ship.wspy+70 < getHeight()) {
                 ship.wspy +=10;
+            }
+
+            if (code == KeyEvent.VK_SPACE){
+                if (!shot.isVisible()){
+                    shot = new Shot(ship.wspx+30, ship.wspy-20, -15);
+                }
             }
             invalidate();
             validate();
