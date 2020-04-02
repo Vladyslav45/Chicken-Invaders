@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class StartWidok extends JFrame {
     static Map<String, Integer> rankingMap = new HashMap<>();
     static String nickname;
-    static String nickwarning;
+
 
     private JButton buttonStart;
     private JButton buttonRanking;
@@ -48,13 +48,15 @@ public class StartWidok extends JFrame {
 
         buttonStart.addActionListener(e -> {
             while (check[0] < 0) {
-                nickname = JOptionPane.showInputDialog("Enter nickname");
-                //TODO when press Cancel in empty inputDialog make NullPointerException
+                nickname = JOptionPane.showInputDialog(null, "Enter nickname");
+                if (nickname == null)
+                    return;
                 if (nickname.length() > 0) {
                     check[0]++;
                 } else {
                     JOptionPane.showMessageDialog(null, "You didn't enter a nickname");
                 }
+
             }
 
             rankingMap.put(nickname, 0);
