@@ -1,4 +1,5 @@
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -10,12 +11,13 @@ public class Chicken {
     public static BufferedImage image;
     public static BufferedImage image1;
     public static BufferedImage image2;
+    private boolean visible;
 
     public Chicken(int posX, int posY) {
 
         this.posX = posX;
         this.posY = posY;
-
+        visible = true;
         File imageFile = new File("image\\chicken0.png");
         File imageFile1 = new File("image\\chicken1.png");
         File imageFile2 = new File("image\\chicken2.png");
@@ -28,6 +30,14 @@ public class Chicken {
             System.err.println("Blad odczytu obrazka");
             e.printStackTrace();
         }
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void die() {
+        visible = false;
     }
 
     public int getPosX() {
@@ -48,9 +58,11 @@ public class Chicken {
             go = 10;
         } else if (posX > 940) {
             go = -10;
-
-
         }
 
+    }
+
+    public Rectangle rectangle() {
+        return new Rectangle(posX, posY, 40, 40);
     }
 }

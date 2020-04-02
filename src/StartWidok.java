@@ -47,9 +47,9 @@ public class StartWidok extends JFrame {
         buttonRanking.setBorderPainted(false);
 
         buttonStart.addActionListener(e -> {
-
             while (check[0] < 0) {
                 nickname = JOptionPane.showInputDialog("Enter nickname");
+                //TODO when press Cancel in empty inputDialog make NullPointerException
                 if (nickname.length() > 0) {
                     check[0]++;
                 } else {

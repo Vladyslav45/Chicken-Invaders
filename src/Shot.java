@@ -1,11 +1,12 @@
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class Shot {
-    public int posX;
-    public int posY;
+    private int posX;
+    private int posY;
     public BufferedImage img;
     public int go;
     private boolean visible;
@@ -29,15 +30,27 @@ public class Shot {
         }
     }
 
+    public void close(){
+        visible = false;
+    }
+
     public boolean isVisible() {
         return visible;
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
     public void move(){
         this.posY += go;
+    }
+
+    public int getPosX() {
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+
+    public Rectangle rectangle(){
+        return new Rectangle(posX,posY, 10,30);
     }
 }
