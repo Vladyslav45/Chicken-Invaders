@@ -28,7 +28,7 @@ public class GameWidok extends JPanel implements ActionListener {
         setFocusable(true);
         setLayout(null);
 
-        timer = new Timer(200, this);
+        timer = new Timer(17, this);
         timer.start();
 
         gameInit();
@@ -101,21 +101,18 @@ public class GameWidok extends JPanel implements ActionListener {
         super.paintComponent(g);
         g.drawImage(new ImageIcon("image\\tloGry.jpg").getImage(), 0, 0, 1000, 800, this);
         chickensMapGenerator.draw(g);
-        g.drawImage(ship.image, ship.wspx, ship.wspy, 70, 70, this);
+        if (ship.isVisible()){
+            g.drawImage(ship.image, ship.wspx, ship.wspy, 40, 40, this);
+        }
         if (shot.isVisible()) {
             g.drawImage(shot.img, shot.getPosX(), shot.getPosY(), 10, 30, this);
         }
-    }
 
-    private void shotPlayer() {
-        for (Chicken[] chickens : chickenList) {
-            for (int j = 0; j < chickens.length; j++) {
-                if (shot.rectangle().intersects(chickens[j].rectangle()) && shot.isVisible() && chickens[j].isVisible()) {
-                    chickens[j].die();
-                    chickensAlive--;
-                    shot.close();
-                    score += 1000;
-                    scoreLabel.setText("Score: " + score);
+        for (Chicken[] chickens : chickenList){
+            for (Chicken chicken : chickens) {
+                Chicken.Bomb b = chicken.getBomb();
+                if (!b.isDestroyed()) {
+                    g.drawImage(b.img, b.getX(), b.getY(), 10, 30, this);
                 }
             }
         }
@@ -141,22 +138,18 @@ public class GameWidok extends JPanel implements ActionListener {
                 }
             }
 
-            if (shot.isVisible() && shot.getPosY() > 0) {
-                shot.move();
-            } else {
-                shot.close();
-            }
             shotPlayer();
+            shotChickens();
         } else {
             timer.stop();
-            gameWinPanel = JOptionPane.showConfirmDialog(this, "YOU WIN", "Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
+            gameWinPanel = JOptionPane.showConfirmDialog(this, "YOU WIN!!!\n" + "Do you want to continue game", "Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
             if (gameWinPanel == JOptionPane.OK_OPTION) {
+                //TODO implementation replay game
+            } else if (gameWinPanel == JOptionPane.OK_CANCEL_OPTION) {
                 StartWidok.rankingMap.put(StartWidok.nickname, score);
                 clip.stop();
                 SwingUtilities.windowForComponent(this).dispose();
                 new StartWidok().setVisible(true);
-            } else if (gameWinPanel == JOptionPane.OK_CANCEL_OPTION) {
-                //TODO implementation replay game
             }
         }
 
@@ -170,25 +163,23 @@ public class GameWidok extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             int code = e.getKeyCode();
             if (code == KeyEvent.VK_LEFT && ship.wspx + 20 > 0) {
-                ship.wspx -= 10;
+                ship.wspx -= 15;
             }
             if (code == KeyEvent.VK_RIGHT && ship.wspx + 65 < getWidth()) {
-                ship.wspx += 10;
+                ship.wspx += 15;
             }
             if (code == KeyEvent.VK_UP && ship.wspy > 0) {
-                ship.wspy -= 10;
+                ship.wspy -= 15;
             }
             if (code == KeyEvent.VK_DOWN && ship.wspy + 70 < getHeight()) {
-                ship.wspy += 10;
+                ship.wspy += 15;
             }
 
             if (code == KeyEvent.VK_SPACE) {
                 if (!shot.isVisible()) {
-                    shot = new Shot(ship.wspx + 30, ship.wspy - 20, -15);
+                    shot = new Shot(ship.wspx+30,ship.wspy-20,7);
                 }
             }
-            invalidate();
-            validate();
             repaint();
         }
     }
@@ -201,6 +192,64 @@ public class GameWidok extends JPanel implements ActionListener {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException s) {
             s.printStackTrace();
+        }
+    }
+
+    private void shotPlayer() {
+        for (Chicken[] chickens : chickenList) {
+            for (int j = 0; j < chickens.length; j++) {
+                if (shot.rectangle().intersects(chickens[j].rectangle()) && shot.isVisible() && chickens[j].isVisible()) {
+                    chickens[j].die();
+                    chickensAlive--;
+                    shot.close();
+                    score += 1000;
+                    scoreLabel.setText("Score: " + score);
+                }
+            }
+        }
+
+        if (shot.isVisible() && shot.getPosY() > 0) {
+            shot.move();
+        } else {
+            shot.close();
+        }
+    }
+
+    private void shotChickens(){
+
+        for (Chicken[] chickens : chickenList){
+            for (Chicken chicken : chickens) {
+                int shot = (int) (Math.random() * 320 + 1);
+                Chicken.Bomb bomb = chicken.getBomb();
+                if (shot == 320 && chicken.isVisible() && bomb.isDestroyed()){
+                    bomb.setDestroyed(false);
+                    bomb.setX(chicken.getPosX());
+                    bomb.setY(chicken.getPosY());
+                }
+
+                if (ship.isVisible() && !bomb.isDestroyed()){
+                    if (ship.rectangle().intersects(bomb.rectangleBomb())){
+                        ship.die();
+                        bomb.setDestroyed(true);
+                        int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "Chicken Invaders", JOptionPane.YES_NO_OPTION);
+                        if (res == JOptionPane.OK_OPTION){
+                            //TODO makeJOptionalPane for replay game
+                        } else if (res == JOptionPane.NO_OPTION){
+                            StartWidok.rankingMap.put(StartWidok.nickname, score);
+                            clip.stop();
+                            SwingUtilities.windowForComponent(this).dispose();
+                            new StartWidok().setVisible(true);
+                        }
+                    }
+                }
+
+                if (!bomb.isDestroyed()){
+                    bomb.setY(bomb.getY()+2);
+                    if (bomb.getY() >= 750){
+                        bomb.setDestroyed(true);
+                    }
+                }
+            }
         }
     }
 }

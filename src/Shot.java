@@ -39,7 +39,7 @@ public class Shot {
     }
 
     public void move(){
-        this.posY += go;
+        this.posY -= go;
     }
 
     public int getPosX() {
@@ -48,6 +48,10 @@ public class Shot {
 
     public int getPosY() {
         return posY;
+    }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
     }
 
     public Rectangle rectangle(){

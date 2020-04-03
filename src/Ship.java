@@ -12,8 +12,10 @@ public class Ship {
     public int wspx=500;
     public int wspy=700;
     public BufferedImage image;
+    private boolean visible;
 
     public Ship() {
+        visible = true;
         File imageFile = new File("image\\ship.png");
         try {
             image = ImageIO.read(imageFile);
@@ -23,6 +25,18 @@ public class Ship {
             e.printStackTrace();
         }
 
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void die(){
+        visible = false;
+    }
+
+    public Rectangle rectangle(){
+        return new Rectangle(wspx,wspy, 40,40);
     }
 
 }
