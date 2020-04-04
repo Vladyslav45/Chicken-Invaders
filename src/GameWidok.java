@@ -38,7 +38,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private int score;
     private JLabel scoreLabel;
     private int chickensAlive = 55;
-    private int gameWinPanel;
+    private int timerDelay = 17;
     private int rotate = 0;
 
     public GameWidok() {
@@ -46,7 +46,7 @@ public class GameWidok extends JPanel implements ActionListener {
         setFocusable(true);
         setLayout(null);
 
-        timer = new Timer(17, this);
+        timer = new Timer(timerDelay, this);
         timer.start();
         gameInit();
         musicOfTheGame();
@@ -184,16 +184,7 @@ public class GameWidok extends JPanel implements ActionListener {
             shotPlayer();
             shotChickens();
         } else {
-            timer.stop();
-            gameWinPanel = JOptionPane.showConfirmDialog(this, "YOU WIN!!!\n" + "Do you want to continue game", "Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
-            if (gameWinPanel == JOptionPane.OK_OPTION) {
-                //TODO implementation replay game
-            } else if (gameWinPanel == JOptionPane.OK_CANCEL_OPTION) {
-                StartWidok.rankingMap.put(StartWidok.nickname, score);
-                clip.stop();
-                SwingUtilities.windowForComponent(this).dispose();
-                new StartWidok().setVisible(true);
-            }
+            gameWin();
         }
 
         repaint();
@@ -201,7 +192,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
 
     public class keyPressPlayer extends KeyAdapter {
-
+        private long lastShoot = System.currentTimeMillis();
         @Override
         public void keyPressed(KeyEvent e) {
             int code = e.getKeyCode();
@@ -218,8 +209,9 @@ public class GameWidok extends JPanel implements ActionListener {
                 ship.wspy += 15;
             }
 
-            if (code == KeyEvent.VK_SPACE) {
+            if (code == KeyEvent.VK_SPACE && lastShoot + 500 < System.currentTimeMillis()) {
                 shots.add(new Shot(ship.wspx + 30, ship.wspy - 20, 7));
+                lastShoot = System.currentTimeMillis();
             }
             invalidate();
             validate();
@@ -281,15 +273,7 @@ public class GameWidok extends JPanel implements ActionListener {
                     if (ship.rectangle().intersects(bomb.rectangleBomb())) {
                         ship.die();
                         bomb.setDestroyed(true);
-                        int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "Chicken Invaders", JOptionPane.YES_NO_OPTION);
-                        if (res == JOptionPane.OK_OPTION) {
-                            //TODO makeJOptionalPane for replay game
-                        } else if (res == JOptionPane.NO_OPTION) {
-                            StartWidok.rankingMap.put(StartWidok.nickname, score);
-                            clip.stop();
-                            SwingUtilities.windowForComponent(this).dispose();
-                            new StartWidok().setVisible(true);
-                        }
+                        gameLose();
                     }
                 }
 
@@ -300,6 +284,38 @@ public class GameWidok extends JPanel implements ActionListener {
                     }
                 }
             }
+        }
+    }
+
+    private void gameWin(){
+        timer.stop();
+        int res = JOptionPane.showConfirmDialog(this, "YOU WIN!!!\n" + "Do you want to continue game", "Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
+        if (res == JOptionPane.OK_OPTION) {
+            timer.start();
+            chickensAlive = 55;
+            gameInit();
+        } else if (res == JOptionPane.OK_CANCEL_OPTION) {
+            StartWidok.rankingMap.put(StartWidok.nickname, score);
+            clip.stop();
+            SwingUtilities.windowForComponent(this).dispose();
+            new StartWidok().setVisible(true);
+        }
+    }
+
+    private void gameLose(){
+        timer.stop();
+        int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "Chicken Invaders", JOptionPane.YES_NO_OPTION);
+        if (res == JOptionPane.OK_OPTION) {
+            timer.start();
+            score = 0;
+            scoreLabel.setText("Score: " + score);
+            chickensAlive = 55;
+            gameInit();
+        } else if (res == JOptionPane.NO_OPTION) {
+            StartWidok.rankingMap.put(StartWidok.nickname, score);
+            clip.stop();
+            SwingUtilities.windowForComponent(this).dispose();
+            new StartWidok().setVisible(true);
         }
     }
 }
