@@ -1,12 +1,26 @@
-import javax.sound.sampled.*;
-import javax.swing.*;
+
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+
 
 public class GameWidok extends JPanel implements ActionListener {
     private JButton pauseButton;
@@ -16,13 +30,12 @@ public class GameWidok extends JPanel implements ActionListener {
     private Clip clip;
     private Ship ship;
     private ChickensMapGenerator chickensMapGenerator;
-    private Shot shot;
+    private ArrayList<Shot> shots;
     static Chicken[][] chickenList;
     private int score;
     private JLabel scoreLabel;
     private int chickensAlive = 55;
     private int gameWinPanel;
-
     public GameWidok() {
         addKeyListener(new keyPressPlayer());
         setFocusable(true);
@@ -30,7 +43,6 @@ public class GameWidok extends JPanel implements ActionListener {
 
         timer = new Timer(17, this);
         timer.start();
-
         gameInit();
         musicOfTheGame();
         scoreLabel = new JLabel();
@@ -93,7 +105,7 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
         ship = new Ship();
-        shot = new Shot();
+        shots = new ArrayList<>();
     }
 
     @Override
@@ -101,10 +113,10 @@ public class GameWidok extends JPanel implements ActionListener {
         super.paintComponent(g);
         g.drawImage(new ImageIcon("image\\tloGry.jpg").getImage(), 0, 0, 1000, 800, this);
         chickensMapGenerator.draw(g);
-        if (ship.isVisible()){
+        if (ship.isVisible()) {
             g.drawImage(ship.image, ship.wspx, ship.wspy, 40, 40, this);
         }
-        if (shot.isVisible()) {
+        for (Shot shot : shots) {
             g.drawImage(shot.img, shot.getPosX(), shot.getPosY(), 10, 30, this);
         }
 
@@ -137,7 +149,16 @@ public class GameWidok extends JPanel implements ActionListener {
                     }
                 }
             }
-
+            Iterator<Shot> shotIterator = shots.iterator();
+            while (shotIterator.hasNext()) {
+                Shot shot = shotIterator.next();
+                if (shot.getPosY() > 0) {
+                    shot.move();
+                }
+                else {
+                    shotIterator.remove();
+                }
+            }
             shotPlayer();
             shotChickens();
         } else {
@@ -155,6 +176,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
         repaint();
     }
+
 
 
     public class keyPressPlayer extends KeyAdapter {
@@ -176,13 +198,15 @@ public class GameWidok extends JPanel implements ActionListener {
             }
 
             if (code == KeyEvent.VK_SPACE) {
-                if (!shot.isVisible()) {
-                    shot = new Shot(ship.wspx+30,ship.wspy-20,7);
-                }
+                shots.add(new Shot(ship.wspx + 30, ship.wspy - 20, 7));
             }
+            invalidate();
+            validate();
             repaint();
         }
     }
+
+
 
     private void musicOfTheGame() {
         try {
@@ -196,24 +220,29 @@ public class GameWidok extends JPanel implements ActionListener {
     }
 
     private void shotPlayer() {
+        Iterator<Shot> iterator = shots.iterator();
+        while (iterator.hasNext()) {
+            Shot shot = iterator.next();
+            if (checkCollision(shot)) {
+                iterator.remove();
+            }
+        }
+    }
+    private boolean checkCollision(Shot shot) {
         for (Chicken[] chickens : chickenList) {
-            for (int j = 0; j < chickens.length; j++) {
-                if (shot.rectangle().intersects(chickens[j].rectangle()) && shot.isVisible() && chickens[j].isVisible()) {
-                    chickens[j].die();
+            for (Chicken chicken : chickens) {
+                if (shot.rectangle().intersects(chicken.rectangle()) && chicken.isVisible()) {
+                    chicken.die();
                     chickensAlive--;
-                    shot.close();
                     score += 1000;
                     scoreLabel.setText("Score: " + score);
+                    return true;
                 }
             }
         }
-
-        if (shot.isVisible() && shot.getPosY() > 0) {
-            shot.move();
-        } else {
-            shot.close();
-        }
+        return false;
     }
+
 
     private void shotChickens(){
 
