@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -29,6 +28,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private Timer timer;
     private Clip clip;
     private Ship ship;
+    private ArrayList<Ship> livePlayer;
     private ChickensMapGenerator chickensMapGenerator;
     private ArrayList<Shot> shots;
     static Chicken[][] chickenList;
@@ -40,9 +40,9 @@ public class GameWidok extends JPanel implements ActionListener {
         addKeyListener(new keyPressPlayer());
         setFocusable(true);
         setLayout(null);
-
         timer = new Timer(17, this);
         timer.start();
+
         gameInit();
         musicOfTheGame();
         scoreLabel = new JLabel();
@@ -104,6 +104,8 @@ public class GameWidok extends JPanel implements ActionListener {
                 chickenList[i][j] = new Chicken(200 + j * 50, 80 + i * 40);
             }
         }
+        livePlayer = new ArrayList<>();
+
         ship = new Ship();
         shots = new ArrayList<>();
     }
@@ -116,6 +118,7 @@ public class GameWidok extends JPanel implements ActionListener {
         if (ship.isVisible()) {
             g.drawImage(ship.image, ship.wspx, ship.wspy, 40, 40, this);
         }
+
         for (Shot shot : shots) {
             g.drawImage(shot.img, shot.getPosX(), shot.getPosY(), 10, 30, this);
         }
@@ -180,7 +183,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
 
     public class keyPressPlayer extends KeyAdapter {
-
+        private long lastShoot = System.currentTimeMillis();
         @Override
         public void keyPressed(KeyEvent e) {
             int code = e.getKeyCode();
@@ -197,8 +200,9 @@ public class GameWidok extends JPanel implements ActionListener {
                 ship.wspy += 15;
             }
 
-            if (code == KeyEvent.VK_SPACE) {
+            if (code == KeyEvent.VK_SPACE && lastShoot + 500 < System.currentTimeMillis()) {
                 shots.add(new Shot(ship.wspx + 30, ship.wspy - 20, 7));
+                lastShoot = System.currentTimeMillis();
             }
             invalidate();
             validate();
