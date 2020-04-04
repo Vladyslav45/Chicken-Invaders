@@ -109,6 +109,8 @@ public class GameWidok extends JPanel implements ActionListener {
                 chickenList[i][j] = new Chicken(200 + j * 50, 80 + i * 40);
             }
         }
+
+        
         ship = new Ship();
         shots = new ArrayList<>();
     }
@@ -137,7 +139,6 @@ public class GameWidok extends JPanel implements ActionListener {
 
         AffineTransform at = AffineTransform.getTranslateInstance(100, 100);
         at.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
-
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(Asteroid, at, this);
         repaint();
@@ -213,13 +214,25 @@ public class GameWidok extends JPanel implements ActionListener {
                 shots.add(new Shot(ship.wspx + 30, ship.wspy - 20, 7));
                 lastShoot = System.currentTimeMillis();
             }
+            if (code == KeyEvent.VK_SPACE) {
+                musicShoot();
+            }
             invalidate();
             validate();
             repaint();
         }
     }
 
-
+private void musicShoot(){
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\shoot.wav").getAbsoluteFile());
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
+            h.printStackTrace();
+        }
+    }
     private void musicOfTheGame() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\muzyka rozpoczynająca rozgrywkę.wav").getAbsoluteFile());
