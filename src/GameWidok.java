@@ -1,10 +1,14 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -28,7 +32,6 @@ public class GameWidok extends JPanel implements ActionListener {
     private Timer timer;
     private Clip clip;
     private Ship ship;
-    private ArrayList<Ship> livePlayer;
     private ChickensMapGenerator chickensMapGenerator;
     private ArrayList<Shot> shots;
     static Chicken[][] chickenList;
@@ -36,13 +39,15 @@ public class GameWidok extends JPanel implements ActionListener {
     private JLabel scoreLabel;
     private int chickensAlive = 55;
     private int gameWinPanel;
+    private int rotate = 0;
+
     public GameWidok() {
         addKeyListener(new keyPressPlayer());
         setFocusable(true);
         setLayout(null);
+
         timer = new Timer(17, this);
         timer.start();
-
         gameInit();
         musicOfTheGame();
         scoreLabel = new JLabel();
@@ -104,8 +109,6 @@ public class GameWidok extends JPanel implements ActionListener {
                 chickenList[i][j] = new Chicken(200 + j * 50, 80 + i * 40);
             }
         }
-        livePlayer = new ArrayList<>();
-
         ship = new Ship();
         shots = new ArrayList<>();
     }
@@ -118,12 +121,11 @@ public class GameWidok extends JPanel implements ActionListener {
         if (ship.isVisible()) {
             g.drawImage(ship.image, ship.wspx, ship.wspy, 40, 40, this);
         }
-
         for (Shot shot : shots) {
             g.drawImage(shot.img, shot.getPosX(), shot.getPosY(), 10, 30, this);
         }
 
-        for (Chicken[] chickens : chickenList){
+        for (Chicken[] chickens : chickenList) {
             for (Chicken chicken : chickens) {
                 Chicken.Bomb b = chicken.getBomb();
                 if (!b.isDestroyed()) {
@@ -131,6 +133,24 @@ public class GameWidok extends JPanel implements ActionListener {
                 }
             }
         }
+        BufferedImage Asteroid = LoadImage("image\\Asteroid.png");
+
+        AffineTransform at = AffineTransform.getTranslateInstance(100, 100);
+        at.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
+
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.drawImage(Asteroid, at, this);
+        repaint();
+    }
+
+    BufferedImage LoadImage(String FileName) {
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File(FileName));
+        } catch (IOException e) {
+
+        }
+        return img;
     }
 
     @Override
@@ -157,8 +177,7 @@ public class GameWidok extends JPanel implements ActionListener {
                 Shot shot = shotIterator.next();
                 if (shot.getPosY() > 0) {
                     shot.move();
-                }
-                else {
+                } else {
                     shotIterator.remove();
                 }
             }
@@ -181,9 +200,8 @@ public class GameWidok extends JPanel implements ActionListener {
     }
 
 
-
     public class keyPressPlayer extends KeyAdapter {
-        private long lastShoot = System.currentTimeMillis();
+
         @Override
         public void keyPressed(KeyEvent e) {
             int code = e.getKeyCode();
@@ -200,16 +218,14 @@ public class GameWidok extends JPanel implements ActionListener {
                 ship.wspy += 15;
             }
 
-            if (code == KeyEvent.VK_SPACE && lastShoot + 500 < System.currentTimeMillis()) {
+            if (code == KeyEvent.VK_SPACE) {
                 shots.add(new Shot(ship.wspx + 30, ship.wspy - 20, 7));
-                lastShoot = System.currentTimeMillis();
             }
             invalidate();
             validate();
             repaint();
         }
     }
-
 
 
     private void musicOfTheGame() {
@@ -232,6 +248,7 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
     }
+
     private boolean checkCollision(Shot shot) {
         for (Chicken[] chickens : chickenList) {
             for (Chicken chicken : chickens) {
@@ -248,26 +265,26 @@ public class GameWidok extends JPanel implements ActionListener {
     }
 
 
-    private void shotChickens(){
+    private void shotChickens() {
 
-        for (Chicken[] chickens : chickenList){
+        for (Chicken[] chickens : chickenList) {
             for (Chicken chicken : chickens) {
                 int shot = (int) (Math.random() * 320 + 1);
                 Chicken.Bomb bomb = chicken.getBomb();
-                if (shot == 320 && chicken.isVisible() && bomb.isDestroyed()){
+                if (shot == 320 && chicken.isVisible() && bomb.isDestroyed()) {
                     bomb.setDestroyed(false);
                     bomb.setX(chicken.getPosX());
                     bomb.setY(chicken.getPosY());
                 }
 
-                if (ship.isVisible() && !bomb.isDestroyed()){
-                    if (ship.rectangle().intersects(bomb.rectangleBomb())){
+                if (ship.isVisible() && !bomb.isDestroyed()) {
+                    if (ship.rectangle().intersects(bomb.rectangleBomb())) {
                         ship.die();
                         bomb.setDestroyed(true);
                         int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "Chicken Invaders", JOptionPane.YES_NO_OPTION);
-                        if (res == JOptionPane.OK_OPTION){
+                        if (res == JOptionPane.OK_OPTION) {
                             //TODO makeJOptionalPane for replay game
-                        } else if (res == JOptionPane.NO_OPTION){
+                        } else if (res == JOptionPane.NO_OPTION) {
                             StartWidok.rankingMap.put(StartWidok.nickname, score);
                             clip.stop();
                             SwingUtilities.windowForComponent(this).dispose();
@@ -276,9 +293,9 @@ public class GameWidok extends JPanel implements ActionListener {
                     }
                 }
 
-                if (!bomb.isDestroyed()){
-                    bomb.setY(bomb.getY()+2);
-                    if (bomb.getY() >= 750){
+                if (!bomb.isDestroyed()) {
+                    bomb.setY(bomb.getY() + 2);
+                    if (bomb.getY() >= 750) {
                         bomb.setDestroyed(true);
                     }
                 }
