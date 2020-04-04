@@ -212,10 +212,8 @@ public class GameWidok extends JPanel implements ActionListener {
 
             if (code == KeyEvent.VK_SPACE && lastShoot + 500 < System.currentTimeMillis()) {
                 shots.add(new Shot(ship.wspx + 30, ship.wspy - 20, 7));
-                lastShoot = System.currentTimeMillis();
-            }
-            if (code == KeyEvent.VK_SPACE) {
                 musicShoot();
+                lastShoot = System.currentTimeMillis();
             }
             invalidate();
             validate();
