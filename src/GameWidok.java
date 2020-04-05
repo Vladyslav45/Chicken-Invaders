@@ -38,11 +38,13 @@ public class GameWidok extends JPanel implements ActionListener {
     private int score;
     private JLabel scoreLabel;
     private int chickensAlive = 55;
+    private int asteroidAlive = 275;
     private int timerDelay = 17;
     private int rotate = 0;
     private int przesun = 0;
     Random random = new Random();
     private double randomMove = random.nextInt(300) * 2;
+    private boolean visible;
 
     public GameWidok() {
         addKeyListener(new keyPressPlayer());
@@ -147,7 +149,7 @@ public class GameWidok extends JPanel implements ActionListener {
         }
 
         drawAsteroid(g);
-
+        drawFirstAidKit(g);
         repaint();
 
 
@@ -243,7 +245,6 @@ public class GameWidok extends JPanel implements ActionListener {
         return false;
     }
 
-
     private void shotChickens() {
 
         for (Chicken[] chickens : chickenList) {
@@ -258,7 +259,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
                 if (ship.isVisible() && !bomb.isDestroyed()) {
                     if (ship.rectangle().intersects(bomb.rectangleBomb())) {
-                        livePlayer.remove(livePlayer.size()-1);
+                        livePlayer.remove(livePlayer.size() - 1);
                         bomb.setDestroyed(true);
 
                         if (livePlayer.isEmpty())
@@ -311,7 +312,8 @@ public class GameWidok extends JPanel implements ActionListener {
         }
     }
 
-    private void drawAsteroid(Graphics g){
+    private void drawAsteroid(Graphics g) {
+
         BufferedImage Asteroid = null;
         try {
             Asteroid = ImageIO.read(new File("image\\Asteroid.png"));
@@ -330,5 +332,25 @@ public class GameWidok extends JPanel implements ActionListener {
 
         g2d.drawImage(Asteroid, at, this);
         g2d.drawImage(Asteroid, at1, this);
+
+    }
+
+    private void drawFirstAidKit(Graphics g) {
+
+        BufferedImage FirstAidKit = null;
+        try {
+            FirstAidKit = ImageIO.read(new File("image\\apteczka.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        AffineTransform at3 = AffineTransform.getTranslateInstance(randomMove * 0.5, 10 + (przesun / 2.5));
+
+        przesun++;
+
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.drawImage(FirstAidKit, at3, this);
+
     }
 }
