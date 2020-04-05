@@ -10,23 +10,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.security.Key;
 import java.util.*;
 
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.Timer;
 
 
 public class GameWidok extends JPanel implements ActionListener {
-    private JButton pauseButton;
+    public JButton pauseButton;
     private JButton resumeButton;
     private JButton closeButton;
     private Timer timer;
@@ -64,10 +58,10 @@ public class GameWidok extends JPanel implements ActionListener {
         pauseButton.setIcon(new ImageIcon("image\\pause.png"));
         pauseButton.setOpaque(false);
         pauseButton.setContentAreaFilled(false);
+        pauseButton.setFocusable(false);
         pauseButton.setBorderPainted(false);
         pauseButton.setBounds(920, 5, 60, 60);
         pauseButton.addActionListener(e -> {
-            //TODO model.Ship doesn't shot and model.Shot press space open menu Pause
             timer.stop();
             JFrame frameForDialog = new JFrame();
             JDialog jDialog = new JDialog(frameForDialog, "Pause", true);

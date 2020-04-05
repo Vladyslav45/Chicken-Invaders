@@ -40,12 +40,14 @@ public class StartWidok extends JFrame {
         buttonStart.setOpaque(false);
         buttonStart.setContentAreaFilled(false);
         buttonStart.setBorderPainted(false);
+        buttonStart.setFocusable(false);
 
         buttonRanking.setBounds(400, 300, 200, 200);
         buttonRanking.setIcon(new ImageIcon("image\\rank.png"));
         buttonRanking.setOpaque(false);
         buttonRanking.setContentAreaFilled(false);
         buttonRanking.setBorderPainted(false);
+        buttonRanking.setFocusable(false);
 
         buttonStart.addActionListener(e -> {
             while (check[0] < 0) {
