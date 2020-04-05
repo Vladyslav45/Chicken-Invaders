@@ -41,7 +41,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private int chickensAlive = 55;
     private int timerDelay = 17;
     private int rotate = 0;
-    private int przesun =0;
+    private int move =0;
     Random random = new Random();
     private double randomMove = random.nextInt(300)*2;
 
@@ -142,15 +142,15 @@ public class GameWidok extends JPanel implements ActionListener {
 
         BufferedImage Asteroid = LoadImage("image\\Asteroid.png");
 
-        AffineTransform at = AffineTransform.getTranslateInstance(randomMove+(przesun/2.5), 10+(przesun/2.5));
+
+        AffineTransform at = AffineTransform.getTranslateInstance(randomMove+(move /2.5), 10+(move /2.5));
         at.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
 
-        AffineTransform at1= AffineTransform.getTranslateInstance(randomMove*1.5, 10+(przesun/2.5));
+        AffineTransform at1= AffineTransform.getTranslateInstance(randomMove*1.5, 10+(move /2.5));
         at1.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
-        przesun++;
+        move++;
 
         Graphics2D g2d = (Graphics2D) g;
-
         g2d.drawImage(Asteroid, at, this);
         g2d.drawImage(Asteroid, at1, this);
         repaint();
@@ -200,6 +200,8 @@ public class GameWidok extends JPanel implements ActionListener {
             shotPlayer();
             shotChickens();
         } else {
+            clip.stop();
+            musicGameWin();
             gameWin();
         }
 
@@ -239,6 +241,27 @@ public class GameWidok extends JPanel implements ActionListener {
 private void musicShoot(){
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\shoot.wav").getAbsoluteFile());
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
+            h.printStackTrace();
+        }
+    }
+    private void musicGameWin(){
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\GameWin.wav").getAbsoluteFile());
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
+            h.printStackTrace();
+        }
+    }
+
+    private void musicGameOver(){
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\GameOver.wav").getAbsoluteFile());
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
@@ -299,6 +322,8 @@ private void musicShoot(){
                     if (ship.rectangle().intersects(bomb.rectangleBomb())) {
                         ship.die();
                         bomb.setDestroyed(true);
+                        clip.stop();
+                        musicGameOver();
                         gameLose();
                     }
                 }
