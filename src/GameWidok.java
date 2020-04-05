@@ -41,9 +41,9 @@ public class GameWidok extends JPanel implements ActionListener {
     private int chickensAlive = 55;
     private int timerDelay = 17;
     private int rotate = 0;
-    private int przesun =0;
+    private int przesun = 0;
     Random random = new Random();
-    private double randomMove = random.nextInt(300)*2;
+    private double randomMove = random.nextInt(300) * 2;
 
     public GameWidok() {
         addKeyListener(new keyPressPlayer());
@@ -133,8 +133,8 @@ public class GameWidok extends JPanel implements ActionListener {
             g.drawImage(shot.img, shot.getPosX(), shot.getPosY(), 10, 30, this);
         }
 
-        for (int i = 0 ; i <= livePlayer.size() ; i++){
-                g.drawImage(ship.image,getWidth()-(50*i),getHeight()-50,30,30,this);
+        for (int i = 0; i <= livePlayer.size(); i++) {
+            g.drawImage(ship.image, getWidth() - (50 * i), getHeight() - 50, 30, 30, this);
 
         }
 
@@ -149,10 +149,10 @@ public class GameWidok extends JPanel implements ActionListener {
 
         BufferedImage Asteroid = LoadImage("image\\Asteroid.png");
 
-        AffineTransform at = AffineTransform.getTranslateInstance(randomMove+(przesun/2.5), 10+(przesun/2.5));
+        AffineTransform at = AffineTransform.getTranslateInstance(randomMove + (przesun / 2.5), 10 + (przesun / 2.5));
         at.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
 
-        AffineTransform at1= AffineTransform.getTranslateInstance(randomMove*1.5, 10+(przesun/2.5));
+        AffineTransform at1 = AffineTransform.getTranslateInstance(randomMove * 1.5, 10 + (przesun / 2.5));
         at1.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
         przesun++;
 
@@ -161,7 +161,6 @@ public class GameWidok extends JPanel implements ActionListener {
         g2d.drawImage(Asteroid, at, this);
         g2d.drawImage(Asteroid, at1, this);
         repaint();
-
 
 
     }
@@ -207,6 +206,8 @@ public class GameWidok extends JPanel implements ActionListener {
             shotPlayer();
             shotChickens();
         } else {
+            clip.stop();
+            musicGameWin();
             gameWin();
         }
 
@@ -216,6 +217,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
     public class keyPressPlayer extends KeyAdapter {
         private long lastShoot = System.currentTimeMillis();
+
         @Override
         public void keyPressed(KeyEvent e) {
             int code = e.getKeyCode();
@@ -243,7 +245,7 @@ public class GameWidok extends JPanel implements ActionListener {
         }
     }
 
-private void musicShoot(){
+    private void musicShoot() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\shoot.wav").getAbsoluteFile());
             clip = AudioSystem.getClip();
@@ -253,6 +255,7 @@ private void musicShoot(){
             h.printStackTrace();
         }
     }
+
     private void musicOfTheGame() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\muzyka rozpoczynająca rozgrywkę.wav").getAbsoluteFile());
@@ -261,6 +264,28 @@ private void musicShoot(){
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException s) {
             s.printStackTrace();
+        }
+    }
+
+    private void musicGameWin() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\GameWin.wav").getAbsoluteFile());
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
+            h.printStackTrace();
+        }
+    }
+
+    private void musicGameOver() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\GameOver.wav").getAbsoluteFile());
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
+            h.printStackTrace();
         }
     }
 
@@ -307,7 +332,9 @@ private void musicShoot(){
                         wasteOfLive();
                         bomb.setDestroyed(true);
                         if (livePlayer.isEmpty())
-                        gameLose();
+                            clip.stop();
+                        musicGameOver();
+                            gameLose();
                     }
                 }
 
@@ -321,7 +348,7 @@ private void musicShoot(){
         }
     }
 
-    private void gameWin(){
+    private void gameWin() {
         timer.stop();
         int res = JOptionPane.showConfirmDialog(this, "YOU WIN!!!\n" + "Do you want to continue game", "Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
         if (res == JOptionPane.OK_OPTION) {
@@ -336,7 +363,7 @@ private void musicShoot(){
         }
     }
 
-    private void gameLose(){
+    private void gameLose() {
         timer.stop();
         int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "Chicken Invaders", JOptionPane.YES_NO_OPTION);
         if (res == JOptionPane.OK_OPTION) {
@@ -353,16 +380,16 @@ private void musicShoot(){
         }
     }
 
-    private void wasteOfLive(){
+    private void wasteOfLive() {
         ArrayList<Ship> newListLive = new ArrayList<>();
-        int i = livePlayer.size()-1;
-            for (Ship p : livePlayer) {
-                if (p != livePlayer.get(i)) {
-                    newListLive.add(p);
-                    livePlayer.get(i).die();
-                }
+        int i = livePlayer.size() - 1;
+        for (Ship p : livePlayer) {
+            if (p != livePlayer.get(i)) {
+                newListLive.add(p);
+                livePlayer.get(i).die();
             }
-            livePlayer = newListLive;
+        }
+        livePlayer = newListLive;
 
     }
 }
