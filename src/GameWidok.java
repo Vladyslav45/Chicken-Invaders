@@ -331,10 +331,10 @@ public class GameWidok extends JPanel implements ActionListener {
                     if (ship.rectangle().intersects(bomb.rectangleBomb())) {
                         wasteOfLive();
                         bomb.setDestroyed(true);
+
                         if (livePlayer.isEmpty())
-                            clip.stop();
-                        musicGameOver();
                             gameLose();
+
                     }
                 }
 
@@ -364,6 +364,8 @@ public class GameWidok extends JPanel implements ActionListener {
     }
 
     private void gameLose() {
+        clip.stop();
+        musicGameOver();
         timer.stop();
         int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "Chicken Invaders", JOptionPane.YES_NO_OPTION);
         if (res == JOptionPane.OK_OPTION) {
