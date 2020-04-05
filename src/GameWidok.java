@@ -5,9 +5,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -33,6 +32,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private Timer timer;
     private Clip clip;
     private Ship ship;
+    private ArrayList<Ship> livePlayer;
     private ChickensMapGenerator chickensMapGenerator;
     private ArrayList<Shot> shots;
     static Chicken[][] chickenList;
@@ -113,8 +113,10 @@ public class GameWidok extends JPanel implements ActionListener {
                 chickenList[i][j] = new Chicken(200 + j * 50, 80 + i * 40);
             }
         }
-
-        
+        livePlayer = new ArrayList<>();
+        livePlayer.add(new Ship());
+        livePlayer.add(new Ship());
+        livePlayer.add(new Ship());
         ship = new Ship();
         shots = new ArrayList<>();
     }
@@ -129,6 +131,11 @@ public class GameWidok extends JPanel implements ActionListener {
         }
         for (Shot shot : shots) {
             g.drawImage(shot.img, shot.getPosX(), shot.getPosY(), 10, 30, this);
+        }
+
+        for (int i = 0 ; i <= livePlayer.size() ; i++){
+                g.drawImage(ship.image,getWidth()-(50*i),getHeight()-50,30,30,this);
+
         }
 
         for (Chicken[] chickens : chickenList) {
@@ -297,8 +304,9 @@ private void musicShoot(){
 
                 if (ship.isVisible() && !bomb.isDestroyed()) {
                     if (ship.rectangle().intersects(bomb.rectangleBomb())) {
-                        ship.die();
+                        wasteOfLive();
                         bomb.setDestroyed(true);
+                        if (livePlayer.isEmpty())
                         gameLose();
                     }
                 }
@@ -343,5 +351,18 @@ private void musicShoot(){
             SwingUtilities.windowForComponent(this).dispose();
             new StartWidok().setVisible(true);
         }
+    }
+
+    private void wasteOfLive(){
+        ArrayList<Ship> newListLive = new ArrayList<>();
+        int i = livePlayer.size()-1;
+            for (Ship p : livePlayer) {
+                if (p != livePlayer.get(i)) {
+                    newListLive.add(p);
+                    livePlayer.get(i).die();
+                }
+            }
+            livePlayer = newListLive;
+
     }
 }
