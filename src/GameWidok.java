@@ -186,8 +186,6 @@ public class GameWidok extends JPanel implements ActionListener {
             shotPlayer();
             shotChickens();
         } else {
-            Music.getClip().stop();
-            Music.musicGameWin();
             gameWin();
         }
 
@@ -279,6 +277,7 @@ public class GameWidok extends JPanel implements ActionListener {
     }
 
     private void gameWin() {
+        Music.musicGameWin();
         timer.stop();
         int res = JOptionPane.showConfirmDialog(this, "YOU WIN!!!\n" + "Do you want to continue game", "model.Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
         if (res == JOptionPane.OK_OPTION) {
@@ -294,7 +293,6 @@ public class GameWidok extends JPanel implements ActionListener {
     }
 
     private void gameLose() {
-        Music.getClip().stop();
         Music.musicGameOver();
         timer.stop();
         int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "model.Chicken Invaders", JOptionPane.YES_NO_OPTION);
