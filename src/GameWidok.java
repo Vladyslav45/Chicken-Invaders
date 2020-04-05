@@ -32,7 +32,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private Timer timer;
     private Clip clip;
     private Ship ship;
-    private ArrayList<Ship> livePlayer;
+    private ArrayList<Integer> livePlayer;
     private ChickensMapGenerator chickensMapGenerator;
     private ArrayList<Shot> shots;
     static Chicken[][] chickenList;
@@ -114,9 +114,9 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
         livePlayer = new ArrayList<>();
-        livePlayer.add(new Ship());
-        livePlayer.add(new Ship());
-        livePlayer.add(new Ship());
+        livePlayer.add(0);
+        livePlayer.add(0);
+        livePlayer.add(0);
         ship = new Ship();
         shots = new ArrayList<>();
     }
@@ -134,7 +134,7 @@ public class GameWidok extends JPanel implements ActionListener {
         }
 
         for (int i = 0; i <= livePlayer.size(); i++) {
-            g.drawImage(ship.image, getWidth() - (50 * i), getHeight() - 50, 30, 30, this);
+            g.drawImage(new ImageIcon("image\\serce.png").getImage(), getWidth() - (50 * i), getHeight() - 50, 30, 30, this);
 
         }
 
@@ -329,7 +329,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
                 if (ship.isVisible() && !bomb.isDestroyed()) {
                     if (ship.rectangle().intersects(bomb.rectangleBomb())) {
-                        wasteOfLive();
+                        livePlayer.remove(livePlayer.size()-1);
                         bomb.setDestroyed(true);
 
                         if (livePlayer.isEmpty())
@@ -380,18 +380,5 @@ public class GameWidok extends JPanel implements ActionListener {
             SwingUtilities.windowForComponent(this).dispose();
             new StartWidok().setVisible(true);
         }
-    }
-
-    private void wasteOfLive() {
-        ArrayList<Ship> newListLive = new ArrayList<>();
-        int i = livePlayer.size() - 1;
-        for (Ship p : livePlayer) {
-            if (p != livePlayer.get(i)) {
-                newListLive.add(p);
-                livePlayer.get(i).die();
-            }
-        }
-        livePlayer = newListLive;
-
     }
 }
