@@ -1,3 +1,5 @@
+package model;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -72,7 +74,7 @@ public class Chicken {
         return new Rectangle(posX, posY, 40, 40);
     }
 
-    class Bomb {
+    public class Bomb {
         private int x;
         private int y;
         public BufferedImage img;
@@ -82,7 +84,7 @@ public class Chicken {
             this.x = x;
             this.y = y;
             destroyed = true;
-            File imageFile = new File("image\\ship.png");
+            File imageFile = new File("image\\red-laser.png");
             try {
                 img = ImageIO.read(imageFile);
 

@@ -1,3 +1,5 @@
+import model.Chicken;
+
 import java.awt.*;
 
 public class ChickensMapGenerator {

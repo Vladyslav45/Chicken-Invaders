@@ -1,4 +1,9 @@
 
+import model.Chicken;
+import model.Ship;
+import model.Shot;
+import music.Music;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -9,11 +14,6 @@ import java.util.*;
 
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,7 +30,6 @@ public class GameWidok extends JPanel implements ActionListener {
     private JButton resumeButton;
     private JButton closeButton;
     private Timer timer;
-    private Clip clip;
     private Ship ship;
     private ArrayList<Integer> livePlayer;
     private ChickensMapGenerator chickensMapGenerator;
@@ -53,7 +52,7 @@ public class GameWidok extends JPanel implements ActionListener {
         timer = new Timer(timerDelay, this);
         timer.start();
         gameInit();
-        musicOfTheGame();
+        Music.musicOfTheGame();
         scoreLabel = new JLabel();
         scoreLabel.setBounds(20, 20, 100, 20);
         scoreLabel.setText("Score: " + score);
@@ -66,7 +65,7 @@ public class GameWidok extends JPanel implements ActionListener {
         pauseButton.setBorderPainted(false);
         pauseButton.setBounds(920, 5, 60, 60);
         pauseButton.addActionListener(e -> {
-            //TODO Ship doesn't shot and Shot press space open menu Pause
+            //TODO model.Ship doesn't shot and model.Shot press space open menu Pause
             timer.stop();
             JFrame frameForDialog = new JFrame();
             JDialog jDialog = new JDialog(frameForDialog, "Pause", true);
@@ -90,7 +89,7 @@ public class GameWidok extends JPanel implements ActionListener {
             closeButton.addActionListener(c -> {
                 frameForDialog.dispose();
                 SwingUtilities.windowForComponent(this).dispose();
-                clip.stop();
+                Music.getClip().stop();
                 StartWidok.rankingMap.put(StartWidok.nickname, score);
                 new StartWidok().setVisible(true);
             });
@@ -147,32 +146,11 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
 
-        BufferedImage Asteroid = LoadImage("image\\Asteroid.png");
+        drawAsteroid(g);
 
-        AffineTransform at = AffineTransform.getTranslateInstance(randomMove + (przesun / 2.5), 10 + (przesun / 2.5));
-        at.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
-
-        AffineTransform at1 = AffineTransform.getTranslateInstance(randomMove * 1.5, 10 + (przesun / 2.5));
-        at1.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
-        przesun++;
-
-        Graphics2D g2d = (Graphics2D) g;
-
-        g2d.drawImage(Asteroid, at, this);
-        g2d.drawImage(Asteroid, at1, this);
         repaint();
 
 
-    }
-
-    BufferedImage LoadImage(String FileName) {
-        BufferedImage img = null;
-        try {
-            img = ImageIO.read(new File(FileName));
-        } catch (IOException e) {
-
-        }
-        return img;
     }
 
     @Override
@@ -206,8 +184,8 @@ public class GameWidok extends JPanel implements ActionListener {
             shotPlayer();
             shotChickens();
         } else {
-            clip.stop();
-            musicGameWin();
+            Music.getClip().stop();
+            Music.musicGameWin();
             gameWin();
         }
 
@@ -236,7 +214,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
             if (code == KeyEvent.VK_SPACE && lastShoot + 500 < System.currentTimeMillis()) {
                 shots.add(new Shot(ship.wspx + 30, ship.wspy - 20, 7));
-                musicShoot();
+                Music.musicShoot();
                 lastShoot = System.currentTimeMillis();
             }
             invalidate();
@@ -245,58 +223,9 @@ public class GameWidok extends JPanel implements ActionListener {
         }
     }
 
-    private void musicShoot() {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\shoot.wav").getAbsoluteFile());
-            clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
-            h.printStackTrace();
-        }
-    }
-
-    private void musicOfTheGame() {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\muzyka rozpoczynająca rozgrywkę.wav").getAbsoluteFile());
-            clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException s) {
-            s.printStackTrace();
-        }
-    }
-
-    private void musicGameWin() {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\GameWin.wav").getAbsoluteFile());
-            clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
-            h.printStackTrace();
-        }
-    }
-
-    private void musicGameOver() {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\GameOver.wav").getAbsoluteFile());
-            clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
-            h.printStackTrace();
-        }
-    }
 
     private void shotPlayer() {
-        Iterator<Shot> iterator = shots.iterator();
-        while (iterator.hasNext()) {
-            Shot shot = iterator.next();
-            if (checkCollision(shot)) {
-                iterator.remove();
-            }
-        }
+        shots.removeIf(this::checkCollision);
     }
 
     private boolean checkCollision(Shot shot) {
@@ -350,24 +279,24 @@ public class GameWidok extends JPanel implements ActionListener {
 
     private void gameWin() {
         timer.stop();
-        int res = JOptionPane.showConfirmDialog(this, "YOU WIN!!!\n" + "Do you want to continue game", "Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
+        int res = JOptionPane.showConfirmDialog(this, "YOU WIN!!!\n" + "Do you want to continue game", "model.Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
         if (res == JOptionPane.OK_OPTION) {
             timer.start();
             chickensAlive = 55;
             gameInit();
         } else if (res == JOptionPane.OK_CANCEL_OPTION) {
             StartWidok.rankingMap.put(StartWidok.nickname, score);
-            clip.stop();
+            Music.getClip().stop();
             SwingUtilities.windowForComponent(this).dispose();
             new StartWidok().setVisible(true);
         }
     }
 
     private void gameLose() {
-        clip.stop();
-        musicGameOver();
+        Music.getClip().stop();
+        Music.musicGameOver();
         timer.stop();
-        int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "Chicken Invaders", JOptionPane.YES_NO_OPTION);
+        int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "model.Chicken Invaders", JOptionPane.YES_NO_OPTION);
         if (res == JOptionPane.OK_OPTION) {
             timer.start();
             score = 0;
@@ -376,9 +305,30 @@ public class GameWidok extends JPanel implements ActionListener {
             gameInit();
         } else if (res == JOptionPane.NO_OPTION) {
             StartWidok.rankingMap.put(StartWidok.nickname, score);
-            clip.stop();
+            Music.getClip().stop();
             SwingUtilities.windowForComponent(this).dispose();
             new StartWidok().setVisible(true);
         }
+    }
+
+    private void drawAsteroid(Graphics g){
+        BufferedImage Asteroid = null;
+        try {
+            Asteroid = ImageIO.read(new File("image\\Asteroid.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        AffineTransform at = AffineTransform.getTranslateInstance(randomMove + (przesun / 2.5), 10 + (przesun / 2.5));
+        at.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
+
+        AffineTransform at1 = AffineTransform.getTranslateInstance(randomMove * 1.5, 10 + (przesun / 2.5));
+        at1.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
+        przesun++;
+
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.drawImage(Asteroid, at, this);
+        g2d.drawImage(Asteroid, at1, this);
     }
 }

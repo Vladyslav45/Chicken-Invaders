@@ -1,3 +1,5 @@
+package model;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -20,7 +22,7 @@ public class Shot {
         this.posY = posY;
         this.go = go;
         visible = true;
-        File imageFile = new File("image\\ship.png");
+        File imageFile = new File("image\\blue-laser.png");
         try {
             img = ImageIO.read(imageFile);
 
