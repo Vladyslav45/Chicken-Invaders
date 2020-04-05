@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
@@ -40,6 +41,9 @@ public class GameWidok extends JPanel implements ActionListener {
     private int chickensAlive = 55;
     private int timerDelay = 17;
     private int rotate = 0;
+    private int przesun =0;
+    Random random = new Random();
+    private double randomMove = random.nextInt(500)*2;
 
     public GameWidok() {
         addKeyListener(new keyPressPlayer());
@@ -135,13 +139,18 @@ public class GameWidok extends JPanel implements ActionListener {
                 }
             }
         }
+
         BufferedImage Asteroid = LoadImage("image\\Asteroid.png");
 
-        AffineTransform at = AffineTransform.getTranslateInstance(100, 100);
+        AffineTransform at = AffineTransform.getTranslateInstance(randomMove+(przesun/2.5), 100+(przesun/2.5));
         at.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
+        przesun++;
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(Asteroid, at, this);
         repaint();
+
+
+
     }
 
     BufferedImage LoadImage(String FileName) {
