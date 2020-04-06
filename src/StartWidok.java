@@ -1,8 +1,12 @@
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
+
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class StartWidok extends JFrame {
@@ -12,7 +16,8 @@ public class StartWidok extends JFrame {
 
     private JButton buttonStart;
     private JButton buttonRanking;
-    private Clip clip;
+    private Player player;
+    private boolean loop = true;
 
 
     public StartWidok() {
@@ -26,7 +31,7 @@ public class StartWidok extends JFrame {
         setTitle("Chicken Invaders");
         setIconImage(new ImageIcon("image\\chicken0.png").getImage());
 
-        music();
+        CompletableFuture.runAsync(this::music);
 
         buttonStart = new JButton();
         buttonRanking = new JButton();
@@ -63,7 +68,8 @@ public class StartWidok extends JFrame {
             }
 
             rankingMap.put(nickname, 0);
-            clip.stop();
+            loop = false;
+            player.close();
             musicAttack();
             dispose();
             new GameWindow().setVisible(true);
@@ -95,11 +101,12 @@ public class StartWidok extends JFrame {
 
     private void music() {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\imperial_march.wav").getAbsoluteFile());
-            clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+            do {
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream("music\\ImperialMarch.mp3"));
+                player = new Player(bufferedInputStream);
+                player.play();
+            } while (loop);
+        } catch (IOException | JavaLayerException e) {
             e.printStackTrace();
         }
     }
@@ -107,7 +114,7 @@ public class StartWidok extends JFrame {
     private void musicAttack() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\chicken2.wav").getAbsoluteFile());
-            clip = AudioSystem.getClip();
+            Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             clip.start();
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException s) {

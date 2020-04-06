@@ -10,8 +10,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.security.Key;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 
 import javax.imageio.ImageIO;
@@ -48,7 +48,7 @@ public class GameWidok extends JPanel implements ActionListener {
         timer = new Timer(timerDelay, this);
         timer.start();
         gameInit();
-        Music.musicOfTheGame();
+        CompletableFuture.runAsync(Music::musicOfTheGame);
         scoreLabel = new JLabel();
         scoreLabel.setBounds(20, 20, 100, 20);
         scoreLabel.setText("Score: " + score);
@@ -85,7 +85,8 @@ public class GameWidok extends JPanel implements ActionListener {
             closeButton.addActionListener(c -> {
                 frameForDialog.dispose();
                 SwingUtilities.windowForComponent(this).dispose();
-                Music.getClip().stop();
+                Music.setLoop(false);
+                Music.getPlayer().close();
                 StartWidok.rankingMap.put(StartWidok.nickname, score);
                 new StartWidok().setVisible(true);
             });
@@ -151,7 +152,6 @@ public class GameWidok extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         if (chickensAlive > 0) {
             for (int i = 0; i < chickenList.length; i++) {
                 for (int j = 0; j < chickenList[i].length; j++) {
@@ -238,7 +238,6 @@ public class GameWidok extends JPanel implements ActionListener {
     }
 
     private void shotChickens() {
-
         for (Chicken[] chickens : chickenList) {
             for (Chicken chicken : chickens) {
                 int shot = (int) (Math.random() * 320 + 1);
@@ -278,9 +277,11 @@ public class GameWidok extends JPanel implements ActionListener {
             timer.start();
             chickensAlive = 55;
             gameInit();
+            Music.getClipGameWin().close();
         } else if (res == JOptionPane.OK_CANCEL_OPTION) {
             StartWidok.rankingMap.put(StartWidok.nickname, score);
-            Music.getClip().stop();
+            Music.setLoop(false);
+            Music.getPlayer().close();
             SwingUtilities.windowForComponent(this).dispose();
             new StartWidok().setVisible(true);
         }
@@ -296,9 +297,11 @@ public class GameWidok extends JPanel implements ActionListener {
             scoreLabel.setText("Score: " + score);
             chickensAlive = 55;
             gameInit();
+            Music.getClipGameLose().close();
         } else if (res == JOptionPane.NO_OPTION) {
             StartWidok.rankingMap.put(StartWidok.nickname, score);
-            Music.getClip().stop();
+            Music.setLoop(false);
+            Music.getPlayer().close();
             SwingUtilities.windowForComponent(this).dispose();
             new StartWidok().setVisible(true);
         }

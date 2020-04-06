@@ -1,15 +1,35 @@
 package music;
 
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
+
 import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class Music {
 
-    private static Clip clip;
+    private static Clip clipGameWin;
+    private static Clip clipGameLose;
+    private static Player player;
+    private static boolean loop = true;
 
-    public static Clip getClip() {
-        return clip;
+    public static void setLoop(boolean loop) {
+        Music.loop = loop;
+    }
+
+    public static Player getPlayer() {
+        return player;
+    }
+
+    public static Clip getClipGameWin() {
+        return clipGameWin;
+    }
+
+    public static Clip getClipGameLose() {
+        return clipGameLose;
     }
 
     public static void musicShoot() {
@@ -27,22 +47,23 @@ public class Music {
 
     public static void musicOfTheGame() {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\muzyka rozpoczynająca rozgrywkę.wav").getAbsoluteFile());
-            clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            FloatControl floatControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            floatControl.setValue(-10f);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException s) {
-            s.printStackTrace();
+            do {
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream("music\\gamemusic.mp3"));
+                player = new Player(bufferedInputStream);
+                player.play();
+            } while (loop);
+        } catch (IOException | JavaLayerException e) {
+            e.printStackTrace();
         }
     }
 
     public static void musicGameWin() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\GameWin.wav").getAbsoluteFile());
-            Clip clipGameWin = AudioSystem.getClip();
+            clipGameWin = AudioSystem.getClip();
             clipGameWin.open(audioInputStream);
+            FloatControl floatControl = (FloatControl) clipGameWin.getControl(FloatControl.Type.MASTER_GAIN);
+            floatControl.setValue(-10f);
             clipGameWin.start();
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
             h.printStackTrace();
@@ -52,11 +73,13 @@ public class Music {
     public static void musicGameOver() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\GameOver.wav").getAbsoluteFile());
-            Clip clipGameLose = AudioSystem.getClip();
+            clipGameLose = AudioSystem.getClip();
             clipGameLose.open(audioInputStream);
+            FloatControl floatControl = (FloatControl) clipGameLose.getControl(FloatControl.Type.MASTER_GAIN);
+            floatControl.setValue(-10f);
             clipGameLose.start();
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
             h.printStackTrace();
         }
     }
-}
+    }
