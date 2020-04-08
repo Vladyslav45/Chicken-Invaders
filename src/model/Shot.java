@@ -13,10 +13,6 @@ public class Shot {
     public int go;
     private boolean visible;
 
-    public Shot(){
-
-    }
-
     public Shot(int posX, int posY, int go){
         this.posX = posX;
         this.posY = posY;
@@ -32,14 +28,6 @@ public class Shot {
         }
     }
 
-    public void close(){
-        visible = false;
-    }
-
-    public boolean isVisible() {
-        return visible;
-    }
-
     public void move(){
         this.posY -= go;
     }
@@ -50,10 +38,6 @@ public class Shot {
 
     public int getPosY() {
         return posY;
-    }
-
-    public void setPosY(int posY) {
-        this.posY = posY;
     }
 
     public Rectangle rectangle(){

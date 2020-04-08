@@ -1,4 +1,5 @@
 
+import model.Boss;
 import model.Chicken;
 import model.Ship;
 import model.Shot;
@@ -25,6 +26,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private JButton closeButton;
     private Timer timer;
     private Ship ship;
+    private Boss boss = new Boss();
     private ArrayList<Integer> livePlayer;
     private ChickensMapGenerator chickensMapGenerator;
     private ArrayList<Shot> shots;
@@ -32,6 +34,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private int score;
     private JLabel scoreLabel;
     private int chickensAlive = 55;
+    private int bossHealth = 15;
     private int asteroidAlive = 275;
     private int timerDelay = 17;
     private int rotate = 0;
@@ -58,45 +61,52 @@ public class GameWidok extends JPanel implements ActionListener {
         pauseButton.setIcon(new ImageIcon("image\\pause.png"));
         pauseButton.setOpaque(false);
         pauseButton.setContentAreaFilled(false);
-        pauseButton.setFocusable(false);
         pauseButton.setBorderPainted(false);
         pauseButton.setBounds(920, 5, 60, 60);
-        pauseButton.addActionListener(e -> {
-            timer.stop();
-            JFrame frameForDialog = new JFrame();
-            JDialog jDialog = new JDialog(frameForDialog, "Pause", true);
-            resumeButton = new JButton();
-            resumeButton.setBounds(10, 10, 60, 60);
-            resumeButton.setIcon(new ImageIcon("image\\resume.png"));
-            resumeButton.setOpaque(false);
-            resumeButton.setContentAreaFilled(false);
-            resumeButton.setBorderPainted(false);
-            resumeButton.addActionListener(e1 -> {
-                jDialog.setVisible(false);
-                timer.start();
-            });
+        pauseButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "pause");
+        pauseButton.getActionMap().put("pause", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timer.stop();
+                JFrame frameForDialog = new JFrame();
+                JDialog jDialog = new JDialog(frameForDialog, "Pause", true);
+                resumeButton = new JButton();
+                resumeButton.setBounds(10, 10, 60, 60);
+                resumeButton.setIcon(new ImageIcon("image\\resume.png"));
+                resumeButton.setOpaque(false);
+                resumeButton.setContentAreaFilled(false);
+                resumeButton.setBorderPainted(false);
+                resumeButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "resume");
+                resumeButton.getActionMap().put("resume", new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        jDialog.setVisible(false);
+                        timer.start();
+                    }
+                });
 
-            closeButton = new JButton();
-            closeButton.setBounds(100, 10, 60, 60);
-            closeButton.setIcon(new ImageIcon("image\\exit.png"));
-            closeButton.setOpaque(false);
-            closeButton.setContentAreaFilled(false);
-            closeButton.setBorderPainted(false);
-            closeButton.addActionListener(c -> {
-                frameForDialog.dispose();
-                SwingUtilities.windowForComponent(this).dispose();
-                Music.setLoop(false);
-                Music.getPlayer().close();
-                StartWidok.rankingMap.put(StartWidok.nickname, score);
-                new StartWidok().setVisible(true);
-            });
+                closeButton = new JButton();
+                closeButton.setBounds(100, 10, 60, 60);
+                closeButton.setIcon(new ImageIcon("image\\exit.png"));
+                closeButton.setOpaque(false);
+                closeButton.setContentAreaFilled(false);
+                closeButton.setBorderPainted(false);
+                closeButton.addActionListener(c -> {
+                    frameForDialog.dispose();
+                    SwingUtilities.windowForComponent(GameWidok.this).dispose();
+                    Music.setLoop(false);
+                    Music.getPlayer().close();
+                    StartWidok.rankingMap.put(StartWidok.nickname, score);
+                    new StartWidok().setVisible(true);
+                });
 
-            jDialog.setLayout(null);
-            jDialog.add(closeButton);
-            jDialog.add(resumeButton);
-            jDialog.setSize(200, 120);
-            jDialog.setLocationRelativeTo(null);
-            jDialog.setVisible(true);
+                jDialog.setLayout(null);
+                jDialog.add(closeButton);
+                jDialog.add(resumeButton);
+                jDialog.setSize(200, 120);
+                jDialog.setLocationRelativeTo(null);
+                jDialog.setVisible(true);
+            }
         });
         add(pauseButton);
         add(scoreLabel);
@@ -115,6 +125,7 @@ public class GameWidok extends JPanel implements ActionListener {
         livePlayer.add(0);
         ship = new Ship();
         shots = new ArrayList<>();
+        boss.checkVisible();
     }
 
     @Override
@@ -143,6 +154,12 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
 
+        if (chickensAlive == 0){
+            if (boss.isVisible()){
+                g.drawImage(boss.getImg(), boss.getPosX(), boss.getPosY(), 120,120,this);
+            }
+        }
+
         drawAsteroid(g);
         drawFirstAidKit(g);
         repaint();
@@ -152,6 +169,15 @@ public class GameWidok extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        Iterator<Shot> shotIterator = shots.iterator();
+        while (shotIterator.hasNext()) {
+            Shot shot = shotIterator.next();
+            if (shot.getPosY() > 0) {
+                shot.move();
+            } else {
+                shotIterator.remove();
+            }
+        }
         if (chickensAlive > 0) {
             for (int i = 0; i < chickenList.length; i++) {
                 for (int j = 0; j < chickenList[i].length; j++) {
@@ -168,19 +194,11 @@ public class GameWidok extends JPanel implements ActionListener {
                     }
                 }
             }
-            Iterator<Shot> shotIterator = shots.iterator();
-            while (shotIterator.hasNext()) {
-                Shot shot = shotIterator.next();
-                if (shot.getPosY() > 0) {
-                    shot.move();
-                } else {
-                    shotIterator.remove();
-                }
-            }
             shotPlayer();
             shotChickens();
         } else {
-            gameWin();
+            boss.setVisible(true);
+            bossHealth();
         }
 
         repaint();
@@ -211,15 +229,33 @@ public class GameWidok extends JPanel implements ActionListener {
                 Music.musicShoot();
                 lastShoot = System.currentTimeMillis();
             }
-            invalidate();
-            validate();
             repaint();
+        }
+    }
+
+    private void bossHealth(){
+        if (boss.isVisible()){
+            boss.move();
+        }
+        shotPlayer();
+        if (bossHealth == 0){
+            boss.setVisible(false);
+            gameWin();
         }
     }
 
 
     private void shotPlayer() {
         shots.removeIf(this::checkCollision);
+        shots.removeIf(this::check);
+    }
+
+    private boolean check(Shot shot){
+        if (shot.rectangle().intersects(boss.rectangle())){
+            bossHealth--;
+            return true;
+        }
+        return false;
     }
 
     private boolean checkCollision(Shot shot) {
@@ -272,7 +308,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private void gameWin() {
         Music.musicGameWin();
         timer.stop();
-        int res = JOptionPane.showConfirmDialog(this, "YOU WIN!!!\n" + "Do you want to continue game", "model.Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
+        int res = JOptionPane.showConfirmDialog(this, "YOU WIN!!!\n" + "Do you want to continue game", "Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
         if (res == JOptionPane.OK_OPTION) {
             timer.start();
             chickensAlive = 55;
@@ -290,7 +326,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private void gameLose() {
         Music.musicGameOver();
         timer.stop();
-        int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "model.Chicken Invaders", JOptionPane.YES_NO_OPTION);
+        int res = JOptionPane.showConfirmDialog(this, "You lose.\n" + "Are you replay game?", "Chicken Invaders", JOptionPane.YES_NO_OPTION);
         if (res == JOptionPane.OK_OPTION) {
             timer.start();
             score = 0;

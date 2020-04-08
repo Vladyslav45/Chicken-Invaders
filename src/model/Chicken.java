@@ -54,7 +54,6 @@ public class Chicken {
 
     public void move() {
         posX += go;
-        // posY += 1;
     }
 
     public void checkBoard() {
