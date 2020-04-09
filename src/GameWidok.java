@@ -126,7 +126,7 @@ public class GameWidok extends JPanel implements ActionListener {
         ship = new Ship();
         shots = new ArrayList<>();
         boss.checkVisible();
-firstAidKiT.checkVisibleFirstAidKit();
+        firstAidKiT.checkVisibleFirstAidKit();
 
     }
 
@@ -166,17 +166,19 @@ firstAidKiT.checkVisibleFirstAidKit();
         if (firstAidKiT.isVisible()) {
             g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
         }
+
         if (chickensAlive == 0) {
+
             if (firstAidKiT.isVisible()) {
                 g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
-
             }
         }
-
-
+        if (chickensAlive <=45) {
+            drawAsteroid(g);
+        }
         firstAidKit();
-        drawAsteroid(g);
-        //drawFirstAidKit(g);
+
+
         repaint();
 
 
@@ -212,8 +214,9 @@ firstAidKiT.checkVisibleFirstAidKit();
             }
             shotPlayer();
             shotChickens();
-            if (chickensAlive == 50){
+            if (chickensAlive == 50) {
                 firstAidKiT.setVisible(true);
+
             } else {
                 firstAidKiT.setVisible(false);
             }

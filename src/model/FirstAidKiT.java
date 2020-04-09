@@ -64,7 +64,7 @@ public class FirstAidKiT {
     public void checkVisibleFirstAidKit() {
         if (!visible) {
             posX = 30;
-            posY = 10;
+            posY = 0 ;
         }
     }
 }
