@@ -1,8 +1,5 @@
 
-import model.Boss;
-import model.Chicken;
-import model.Ship;
-import model.Shot;
+import model.*;
 import music.Music;
 
 import java.awt.*;
@@ -27,6 +24,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private Timer timer;
     private Ship ship;
     private Boss boss = new Boss();
+    private FirstAidKiT firstAidKiT = new FirstAidKiT();
     private ArrayList<Integer> livePlayer;
     private ChickensMapGenerator chickensMapGenerator;
     private ArrayList<Shot> shots;
@@ -41,7 +39,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private int przesun = 0;
     Random random = new Random();
     private double randomMove = random.nextInt(300) * 2;
-    private boolean visible;
+
 
     public GameWidok() {
         addKeyListener(new keyPressPlayer());
@@ -76,7 +74,7 @@ public class GameWidok extends JPanel implements ActionListener {
                 resumeButton.setOpaque(false);
                 resumeButton.setContentAreaFilled(false);
                 resumeButton.setBorderPainted(false);
-                resumeButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "resume");
+                resumeButton.getInputMap(JButton.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "resume");
                 resumeButton.getActionMap().put("resume", new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -123,9 +121,12 @@ public class GameWidok extends JPanel implements ActionListener {
         livePlayer.add(0);
         livePlayer.add(0);
         livePlayer.add(0);
+
         ship = new Ship();
         shots = new ArrayList<>();
         boss.checkVisible();
+        firstAidKiT.checkVisibleFirstAidKit();
+
     }
 
     @Override
@@ -154,14 +155,27 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
 
-        if (chickensAlive == 0){
-            if (boss.isVisible()){
-                g.drawImage(boss.getImg(), boss.getPosX(), boss.getPosY(), 120,120,this);
+        if (chickensAlive == 0) {
+            if (boss.isVisible()) {
+                g.drawImage(boss.getImg(), boss.getPosX(), boss.getPosY(), 120, 120, this);
             }
         }
 
+
+        if (firstAidKiT.isVisible() && chickensAlive <= 50) {
+            g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
+        }
+        if (chickensAlive == 0) {
+            if (firstAidKiT.isVisible()) {
+                g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
+
+            }
+        }
+
+
+        firstAidKit();
         drawAsteroid(g);
-        drawFirstAidKit(g);
+        //drawFirstAidKit(g);
         repaint();
 
 
@@ -196,9 +210,12 @@ public class GameWidok extends JPanel implements ActionListener {
             }
             shotPlayer();
             shotChickens();
+            firstAidKiT.setVisible(true);
         } else {
             boss.setVisible(true);
             bossHealth();
+            firstAidKiT.setVisible(true);
+
         }
 
         repaint();
@@ -233,25 +250,37 @@ public class GameWidok extends JPanel implements ActionListener {
         }
     }
 
-    private void bossHealth(){
-        if (boss.isVisible()){
+    private void firstAidKit() {
+        if (firstAidKiT.isVisible()) {
+            firstAidKiT.move();
+        }
+    }
+
+    private void bossHealth() {
+        if (boss.isVisible()) {
             boss.move();
+
         }
         shotPlayer();
-        if (bossHealth == 0){
+        if (bossHealth == 0) {
             boss.setVisible(false);
             gameWin();
         }
     }
 
+    private void FirstAidKitCheck(Shot shot) {
+        if (shot.rectangle().intersects(firstAidKiT.rectangle())) {
+
+        }
+    }
 
     private void shotPlayer() {
         shots.removeIf(this::checkCollision);
         shots.removeIf(this::check);
     }
 
-    private boolean check(Shot shot){
-        if (shot.rectangle().intersects(boss.rectangle())){
+    private boolean check(Shot shot) {
+        if (shot.rectangle().intersects(boss.rectangle())) {
             bossHealth--;
             return true;
         }
@@ -363,25 +392,6 @@ public class GameWidok extends JPanel implements ActionListener {
 
         g2d.drawImage(Asteroid, at, this);
         g2d.drawImage(Asteroid, at1, this);
-
-    }
-
-    private void drawFirstAidKit(Graphics g) {
-
-        BufferedImage FirstAidKit = null;
-        try {
-            FirstAidKit = ImageIO.read(new File("image\\apteczka.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        AffineTransform at3 = AffineTransform.getTranslateInstance(randomMove * 0.5, 10 + (przesun / 2.5));
-
-        przesun++;
-
-        Graphics2D g2d = (Graphics2D) g;
-
-        g2d.drawImage(FirstAidKit, at3, this);
 
     }
 }
