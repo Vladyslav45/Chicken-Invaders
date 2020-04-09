@@ -39,7 +39,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private int przesun = 0;
     Random random = new Random();
     private double randomMove = random.nextInt(300) * 2;
-
+    private boolean visible;
 
     public GameWidok() {
         addKeyListener(new keyPressPlayer());
@@ -117,6 +117,7 @@ public class GameWidok extends JPanel implements ActionListener {
                 chickenList[i][j] = new Chicken(200 + j * 50, 80 + i * 40);
             }
         }
+
         livePlayer = new ArrayList<>();
         livePlayer.add(0);
         livePlayer.add(0);
@@ -125,7 +126,7 @@ public class GameWidok extends JPanel implements ActionListener {
         ship = new Ship();
         shots = new ArrayList<>();
         boss.checkVisible();
-        firstAidKiT.checkVisibleFirstAidKit();
+firstAidKiT.checkVisibleFirstAidKit();
 
     }
 
@@ -210,11 +211,11 @@ public class GameWidok extends JPanel implements ActionListener {
             }
             shotPlayer();
             shotChickens();
-            firstAidKiT.setVisible(true);
+            firstAidKiT.setVisible(true) ;
         } else {
             boss.setVisible(true);
             bossHealth();
-            firstAidKiT.setVisible(true);
+            firstAidKiT.setVisible(true) ;
 
         }
 
@@ -268,9 +269,9 @@ public class GameWidok extends JPanel implements ActionListener {
         }
     }
 
-    private void FirstAidKitCheck(Shot shot) {
-        if (shot.rectangle().intersects(firstAidKiT.rectangle())) {
-
+    private void addLife() {
+        if (ship.rectangle().intersects(firstAidKiT.rectangle())) {
+            livePlayer.add(livePlayer.size() + 1);
         }
     }
 
@@ -323,7 +324,6 @@ public class GameWidok extends JPanel implements ActionListener {
 
                     }
                 }
-
                 if (!bomb.isDestroyed()) {
                     bomb.setY(bomb.getY() + 2);
                     if (bomb.getY() >= 750) {
