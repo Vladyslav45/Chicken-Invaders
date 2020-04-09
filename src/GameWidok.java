@@ -163,7 +163,7 @@ firstAidKiT.checkVisibleFirstAidKit();
         }
 
 
-        if (firstAidKiT.isVisible() && chickensAlive <= 50) {
+        if (firstAidKiT.isVisible()) {
             g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
         }
         if (chickensAlive == 0) {
@@ -193,6 +193,7 @@ firstAidKiT.checkVisibleFirstAidKit();
                 shotIterator.remove();
             }
         }
+
         if (chickensAlive > 0) {
             for (int i = 0; i < chickenList.length; i++) {
                 for (int j = 0; j < chickenList[i].length; j++) {
@@ -211,12 +212,15 @@ firstAidKiT.checkVisibleFirstAidKit();
             }
             shotPlayer();
             shotChickens();
-            firstAidKiT.setVisible(true) ;
+            if (chickensAlive == 50){
+                firstAidKiT.setVisible(true);
+            } else {
+                firstAidKiT.setVisible(false);
+            }
         } else {
+            firstAidKiT.setVisible(true);
             boss.setVisible(true);
             bossHealth();
-            firstAidKiT.setVisible(true) ;
-
         }
 
         repaint();
