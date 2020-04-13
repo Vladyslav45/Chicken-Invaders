@@ -32,6 +32,20 @@ public class Music {
         return clipGameLose;
     }
 
+
+    public static void musicShootChicken2() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\shotChicken.wav").getAbsoluteFile());
+            Clip clipShoot = AudioSystem.getClip();
+            clipShoot.open(audioInputStream);
+            FloatControl floatControl = (FloatControl) clipShoot.getControl(FloatControl.Type.MASTER_GAIN);
+            floatControl.setValue(-2f);
+            clipShoot.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
+            h.printStackTrace();
+        }
+    }
+
     public static void musicShoot() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\shoot.wav").getAbsoluteFile());

@@ -301,6 +301,7 @@ public class GameWidok extends JPanel implements ActionListener {
         for (Chicken[] chickens : chickenList) {
             for (Chicken chicken : chickens) {
                 if (shot.rectangle().intersects(chicken.rectangle()) && chicken.isVisible()) {
+                    Music.musicShootChicken2();
                     chicken.die();
                     chickensAlive--;
                     score += 1000;
