@@ -135,6 +135,7 @@ public class GameWidok extends JPanel implements ActionListener {
         super.paintComponent(g);
         g.drawImage(new ImageIcon("image\\tloGry.jpg").getImage(), 0, 0, 1000, 800, this);
         chickensMapGenerator.draw(g);
+
         if (ship.isVisible()) {
             g.drawImage(ship.image, ship.wspx, ship.wspy, 40, 40, this);
         }
@@ -173,7 +174,7 @@ public class GameWidok extends JPanel implements ActionListener {
                 g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
             }
         }
-        if (chickensAlive <=45) {
+        if (chickensAlive <= 45) {
             drawAsteroid(g);
         }
         firstAidKit();
@@ -222,6 +223,7 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         } else {
             firstAidKiT.setVisible(true);
+           // shotBoss();
             boss.setVisible(true);
             bossHealth();
         }
@@ -321,13 +323,15 @@ public class GameWidok extends JPanel implements ActionListener {
                     bomb.setY(chicken.getPosY());
                 }
 
+
                 if (ship.isVisible() && !bomb.isDestroyed()) {
                     if (ship.rectangle().intersects(bomb.rectangleBomb())) {
                         livePlayer.remove(livePlayer.size() - 1);
                         bomb.setDestroyed(true);
-
+                        Music.musicExplosion();
                         if (livePlayer.isEmpty())
                             gameLose();
+
 
                     }
                 }
@@ -340,6 +344,32 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
     }
+
+//    private void shotBoss() {
+//        int shots = (int) (Math.random() * 320 + 1);
+//        Boss.Bullet bullet = boss.getBullet();
+//        if (shots == 320 && boss.isVisible() && bullet.isDestroy()) {
+//            bullet.setDestroy(false);
+//            bullet.setX(boss.getPosX());
+//            bullet.setY(boss.getPosY());
+//        }
+//
+//        if (ship.isVisible()){
+//            if(ship.rectangle().intersects((bullet.rectangleBullet()))){
+//                livePlayer.remove(livePlayer.size()-1);
+//                bullet.setDestroy(true);
+//
+//                if (livePlayer.isEmpty())
+//                    gameLose();
+//            }
+//        }
+//        if(!bullet.isDestroy()){
+//            bullet.setY(bullet.getY()+2);
+//            if (bullet.getY() >=750){
+//                bullet.setDestroy(true);
+//            }
+//        }
+//    }
 
     private void gameWin() {
         Music.musicGameWin();
@@ -400,5 +430,7 @@ public class GameWidok extends JPanel implements ActionListener {
         g2d.drawImage(Asteroid, at, this);
         g2d.drawImage(Asteroid, at1, this);
 
+
     }
+
 }
