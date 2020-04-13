@@ -318,6 +318,7 @@ public class GameWidok extends JPanel implements ActionListener {
                 int shot = (int) (Math.random() * 320 + 1);
                 Chicken.Bomb bomb = chicken.getBomb();
                 if (shot == 320 && chicken.isVisible() && bomb.isDestroyed()) {
+                    Music.musicShootChicken();
                     bomb.setDestroyed(false);
                     bomb.setX(chicken.getPosX());
                     bomb.setY(chicken.getPosY());

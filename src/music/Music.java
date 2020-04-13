@@ -38,13 +38,25 @@ public class Music {
             Clip clipShoot = AudioSystem.getClip();
             clipShoot.open(audioInputStream);
             FloatControl floatControl = (FloatControl) clipShoot.getControl(FloatControl.Type.MASTER_GAIN);
-            floatControl.setValue(-10f);
+            floatControl.setValue(-5f);
             clipShoot.start();
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
             h.printStackTrace();
         }
     }
 
+    public static void musicShootChicken() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\shoot.wav").getAbsoluteFile());
+            Clip clipShoot = AudioSystem.getClip();
+            clipShoot.open(audioInputStream);
+            FloatControl floatControl = (FloatControl) clipShoot.getControl(FloatControl.Type.MASTER_GAIN);
+            floatControl.setValue(-17f);
+            clipShoot.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
+            h.printStackTrace();
+        }
+    }
     public static void musicOfTheGame() {
         try {
             do {
