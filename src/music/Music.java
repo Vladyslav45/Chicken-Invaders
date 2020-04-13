@@ -69,7 +69,18 @@ public class Music {
             h.printStackTrace();
         }
     }
-
+    public static void musicExplosion() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\explosion.wav").getAbsoluteFile());
+            clipGameWin = AudioSystem.getClip();
+            clipGameWin.open(audioInputStream);
+            FloatControl floatControl = (FloatControl) clipGameWin.getControl(FloatControl.Type.MASTER_GAIN);
+            floatControl.setValue(-10f);
+            clipGameWin.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
+            h.printStackTrace();
+        }
+    }
     public static void musicGameOver() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\GameOver.wav").getAbsoluteFile());
