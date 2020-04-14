@@ -42,10 +42,6 @@ public class FirstAidKiT {
         return posY;
     }
 
-    public void setPosY(int posY) {
-        this.posY = posY;
-    }
-
     public void setVisible(boolean visible) {
         this.visible = visible;
     }

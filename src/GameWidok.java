@@ -4,15 +4,9 @@ import music.Music;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
 
@@ -32,16 +26,11 @@ public class GameWidok extends JPanel implements ActionListener {
     private int score;
     private JLabel scoreLabel;
     private int chickensAlive = 55;
-    private int bossHealth = 15;
-    private int asteroidAlive = 275;
+    private JPanel healthBoss;
+    private JProgressBar healthBossBar;
+    private int countBossHealth = 15;
     private int timerDelay = 17;
-    private int rotate = 0;
-    private int przesun = 0;
-    Random random = new Random();
-    private double randomMove = random.nextInt(300) * 2;
-    private boolean visible;
     private long lastFirstAidKit;
-    private Asteroid asteroid;
     private long lastAsteroid;
     private ArrayList<Asteroid> asteroids;
 
@@ -55,6 +44,11 @@ public class GameWidok extends JPanel implements ActionListener {
         lastFirstAidKit = System.currentTimeMillis();
         lastAsteroid = System.currentTimeMillis();
         gameInit();
+        healthBoss = new JPanel();
+        healthBossBar = new JProgressBar(0,15);
+        healthBoss.setBounds(400,15,250,20);
+        healthBossBar.setPreferredSize(new Dimension(250,20));
+        healthBoss.setVisible(false);
         CompletableFuture.runAsync(Music::musicOfTheGame);
         scoreLabel = new JLabel();
         scoreLabel.setBounds(20, 20, 100, 20);
@@ -114,6 +108,8 @@ public class GameWidok extends JPanel implements ActionListener {
         });
         add(pauseButton);
         add(scoreLabel);
+        add(healthBoss);
+        healthBoss.add(healthBossBar);
     }
 
     private void gameInit() {
@@ -128,13 +124,17 @@ public class GameWidok extends JPanel implements ActionListener {
         livePlayer.add(0);
         livePlayer.add(0);
         livePlayer.add(0);
-        //asteroid = new Asteroid();
         asteroids = new ArrayList<>();
         ship = new Ship();
         shots = new ArrayList<>();
         boss.checkVisible();
         firstAidKiT.checkVisibleFirstAidKit();
 
+    }
+
+    private void asteroids(Graphics g,Asteroid as){
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.drawImage(as.asteroid, as.getAt(), this);
     }
 
     @Override
@@ -157,9 +157,9 @@ public class GameWidok extends JPanel implements ActionListener {
 
         for (Chicken[] chickens : chickenList) {
             for (Chicken chicken : chickens) {
-                Chicken.Bomb b = chicken.getBomb();
-                if (!b.isDestroyed()) {
-                    g.drawImage(b.img, b.getX(), b.getY(), 10, 30, this);
+                Chicken.ShotChicken shotChicken = chicken.getShotChicken();
+                if (!shotChicken.isDestroyed()) {
+                    g.drawImage(shotChicken.img, shotChicken.getX(), shotChicken.getY(), 10, 30, this);
                 }
             }
         }
@@ -177,19 +177,6 @@ public class GameWidok extends JPanel implements ActionListener {
         for (Asteroid asteroid1 : asteroids){
             asteroids(g,asteroid1);
         }
-
-
-//
-//        if (chickensAlive == 0) {
-//
-//            if (firstAidKiT.isVisible()) {
-//                g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
-//            }
-//        }
-//        if (chickensAlive <= 45) {
-//            drawAsteroid(g);
-//        }
-
         repaint();
 
 
@@ -258,16 +245,16 @@ public class GameWidok extends JPanel implements ActionListener {
         @Override
         public void keyPressed(KeyEvent e) {
             int code = e.getKeyCode();
-            if (code == KeyEvent.VK_LEFT && ship.wspx + 20 > 0) {
+            if (code == KeyEvent.VK_LEFT && ship.wspx > 0) {
                 ship.wspx -= 15;
             }
-            if (code == KeyEvent.VK_RIGHT && ship.wspx + 65 < getWidth()) {
+            if (code == KeyEvent.VK_RIGHT && ship.wspx + 20 < getWidth()) {
                 ship.wspx += 15;
             }
             if (code == KeyEvent.VK_UP && ship.wspy > 0) {
                 ship.wspy -= 15;
             }
-            if (code == KeyEvent.VK_DOWN && ship.wspy + 70 < getHeight()) {
+            if (code == KeyEvent.VK_DOWN && ship.wspy + 60 < getHeight()) {
                 ship.wspy += 15;
             }
 
@@ -287,12 +274,16 @@ public class GameWidok extends JPanel implements ActionListener {
     }
 
     private void bossHealth() {
+        healthBoss.setVisible(true);
+        healthBossBar.setValue(countBossHealth);
+        healthBossBar.setBackground(Color.RED);
+        healthBossBar.setForeground(Color.GREEN);
         if (boss.isVisible()) {
             boss.move();
 
         }
         shotPlayer();
-        if (bossHealth == 0) {
+        if (healthBossBar.getValue() == 0) {
             boss.setVisible(false);
             gameWin();
         }
@@ -312,7 +303,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
     private boolean check(Shot shot) {
         if (shot.rectangle().intersects(boss.rectangle())) {
-            bossHealth--;
+            countBossHealth--;
             return true;
         }
         return false;
@@ -337,20 +328,20 @@ public class GameWidok extends JPanel implements ActionListener {
     private void shotChickens() {
         for (Chicken[] chickens : chickenList) {
             for (Chicken chicken : chickens) {
-                int shot = (int) (Math.random() * 320 + 1);
-                Chicken.Bomb bomb = chicken.getBomb();
-                if (shot == 320 && chicken.isVisible() && bomb.isDestroyed()) {
+                int shot = (int) (Math.random() * 150 + 1);
+                Chicken.ShotChicken shotChicken = chicken.getShotChicken();
+                if (shot == 150 && chicken.isVisible() && shotChicken.isDestroyed()) {
                     Music.musicShootChicken();
-                    bomb.setDestroyed(false);
-                    bomb.setX(chicken.getPosX());
-                    bomb.setY(chicken.getPosY());
+                    shotChicken.setDestroyed(false);
+                    shotChicken.setX(chicken.getPosX());
+                    shotChicken.setY(chicken.getPosY());
                 }
 
 
-                if (ship.isVisible() && !bomb.isDestroyed()) {
-                    if (ship.rectangle().intersects(bomb.rectangleBomb())) {
+                if (ship.isVisible() && !shotChicken.isDestroyed()) {
+                    if (ship.rectangle().intersects(shotChicken.rectangleBomb())) {
                         livePlayer.remove(livePlayer.size() - 1);
-                        bomb.setDestroyed(true);
+                        shotChicken.setDestroyed(true);
                         Music.musicExplosion();
                         if (livePlayer.isEmpty())
                             gameLose();
@@ -358,11 +349,15 @@ public class GameWidok extends JPanel implements ActionListener {
 
                     }
                 }
-                if (!bomb.isDestroyed()) {
-                    bomb.setY(bomb.getY() + 2);
-                    if (bomb.getY() >= 750) {
-                        bomb.setDestroyed(true);
+                if (!shotChicken.isDestroyed()) {
+                    shotChicken.setY(shotChicken.getY() + 4);
+                    if (shotChicken.getY() >= 750) {
+                        shotChicken.setDestroyed(true);
                     }
+                }
+
+                if (boss.isVisible()){
+                    shotChicken.setDestroyed(true);
                 }
             }
         }
@@ -400,6 +395,8 @@ public class GameWidok extends JPanel implements ActionListener {
         int res = JOptionPane.showConfirmDialog(this, "YOU WIN!!!\n" + "Do you want to continue game", "Chicken Invaders", JOptionPane.OK_CANCEL_OPTION);
         if (res == JOptionPane.OK_OPTION) {
             timer.start();
+            countBossHealth = 15;
+            healthBoss.setVisible(false);
             chickensAlive = 55;
             gameInit();
             Music.getClipGameWin().close();
@@ -419,6 +416,8 @@ public class GameWidok extends JPanel implements ActionListener {
         if (res == JOptionPane.OK_OPTION) {
             timer.start();
             score = 0;
+            countBossHealth = 15;
+            healthBoss.setVisible(false);
             scoreLabel.setText("Score: " + score);
             chickensAlive = 55;
             gameInit();
@@ -431,34 +430,4 @@ public class GameWidok extends JPanel implements ActionListener {
             new StartWidok().setVisible(true);
         }
     }
-
-    private void drawAsteroid(Graphics g) {
-
-        BufferedImage Asteroid = null;
-        try {
-            Asteroid = ImageIO.read(new File("image\\Asteroid.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        AffineTransform at = AffineTransform.getTranslateInstance(randomMove + (przesun / 2.5), 10 + (przesun / 2.5));
-        at.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
-
-        AffineTransform at1 = AffineTransform.getTranslateInstance(randomMove * 1.5, 10 + (przesun / 2.5));
-        at1.rotate(Math.toRadians(rotate++), Asteroid.getWidth() / 2, Asteroid.getHeight() / 2);
-        przesun++;
-
-        Graphics2D g2d = (Graphics2D) g;
-
-        g2d.drawImage(Asteroid, at, this);
-        g2d.drawImage(Asteroid, at1, this);
-
-
-    }
-
-    private void asteroids(Graphics g,Asteroid as){
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(as.asteroid, as.getAt(), this);
-    }
-
 }

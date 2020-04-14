@@ -33,12 +33,4 @@ public class Asteroid {
     public AffineTransform getAt() {
         return at;
     }
-
-    public double getWidth() {
-        return asteroid.getWidth();
-    }
-
-    public double getHeight() {
-        return asteroid.getHeight();
-    }
 }

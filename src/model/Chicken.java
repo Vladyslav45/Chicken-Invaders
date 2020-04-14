@@ -14,14 +14,14 @@ public class Chicken {
     public static BufferedImage image1;
     public static BufferedImage image2;
     private boolean visible;
-    private Bomb bomb;
+    private ShotChicken shotChicken;
 
     public Chicken(int posX, int posY) {
 
         this.posX = posX;
         this.posY = posY;
         visible = true;
-        bomb = new Bomb(posX, posY);
+        shotChicken = new ShotChicken(posX, posY);
         File imageFile = new File("image\\chicken0.png");
         File imageFile1 = new File("image\\chicken1.png");
         File imageFile2 = new File("image\\chicken2.png");
@@ -65,21 +65,21 @@ public class Chicken {
 
     }
 
-    public Bomb getBomb() {
-        return bomb;
+    public ShotChicken getShotChicken() {
+        return shotChicken;
     }
 
     public Rectangle rectangle() {
         return new Rectangle(posX, posY, 40, 40);
     }
 
-    public class Bomb {
+    public class ShotChicken {
         private int x;
         private int y;
         public BufferedImage img;
         private boolean destroyed;
 
-        public Bomb(int x, int y) {
+        public ShotChicken(int x, int y) {
             this.x = x;
             this.y = y;
             destroyed = true;

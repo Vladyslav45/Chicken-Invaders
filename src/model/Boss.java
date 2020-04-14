@@ -51,8 +51,8 @@ public class Boss {
     }
 
     public void move(){
-        posX = posX + (int) (Math.random() * 2 + 0) + go;
-        posY = posY + (int) (Math.random() * 2 + 0) + goDown;
+        posX = posX + (int) (Math.random() * 3 + 0) + go;
+        posY = posY + (int) (Math.random() * 3 + 0) + goDown;
 
         if (posX < 20){
             go += 1;
