@@ -88,8 +88,6 @@ public class Music {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\GameWin.wav").getAbsoluteFile());
             clipGameWin = AudioSystem.getClip();
             clipGameWin.open(audioInputStream);
-            FloatControl floatControl = (FloatControl) clipGameWin.getControl(FloatControl.Type.MASTER_GAIN);
-            floatControl.setValue(-10f);
             clipGameWin.start();
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
             h.printStackTrace();
