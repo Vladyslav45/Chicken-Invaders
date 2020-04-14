@@ -42,6 +42,10 @@ public class FirstAidKiT {
         return posY;
     }
 
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
+
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
@@ -64,7 +68,8 @@ public class FirstAidKiT {
     public void checkVisibleFirstAidKit() {
         if (!visible) {
             posX = 30;
-            posY = 0 ;
+            posY = 0;
+            goDown=0;
         }
     }
 }

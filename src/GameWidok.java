@@ -40,6 +40,10 @@ public class GameWidok extends JPanel implements ActionListener {
     Random random = new Random();
     private double randomMove = random.nextInt(300) * 2;
     private boolean visible;
+    private long lastFirstAidKit;
+    private Asteroid asteroid;
+    private long lastAsteroid;
+    private ArrayList<Asteroid> asteroids;
 
     public GameWidok() {
         addKeyListener(new keyPressPlayer());
@@ -48,6 +52,8 @@ public class GameWidok extends JPanel implements ActionListener {
 
         timer = new Timer(timerDelay, this);
         timer.start();
+        lastFirstAidKit = System.currentTimeMillis();
+        lastAsteroid = System.currentTimeMillis();
         gameInit();
         CompletableFuture.runAsync(Music::musicOfTheGame);
         scoreLabel = new JLabel();
@@ -122,7 +128,8 @@ public class GameWidok extends JPanel implements ActionListener {
         livePlayer.add(0);
         livePlayer.add(0);
         livePlayer.add(0);
-
+        //asteroid = new Asteroid();
+        asteroids = new ArrayList<>();
         ship = new Ship();
         shots = new ArrayList<>();
         boss.checkVisible();
@@ -167,18 +174,21 @@ public class GameWidok extends JPanel implements ActionListener {
         if (firstAidKiT.isVisible()) {
             g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
         }
-
-        if (chickensAlive == 0) {
-
-            if (firstAidKiT.isVisible()) {
-                g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
-            }
+        for (Asteroid asteroid1 : asteroids){
+            asteroids(g,asteroid1);
         }
-        if (chickensAlive <= 45) {
-            drawAsteroid(g);
-        }
-        firstAidKit();
 
+
+//
+//        if (chickensAlive == 0) {
+//
+//            if (firstAidKiT.isVisible()) {
+//                g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
+//            }
+//        }
+//        if (chickensAlive <= 45) {
+//            drawAsteroid(g);
+//        }
 
         repaint();
 
@@ -215,20 +225,30 @@ public class GameWidok extends JPanel implements ActionListener {
             }
             shotPlayer();
             shotChickens();
-            if (chickensAlive == 50) {
-                firstAidKiT.setVisible(true);
-
-            } else {
-                firstAidKiT.setVisible(false);
-            }
-        } else {
-            firstAidKiT.setVisible(true);
+        }else {
            // shotBoss();
             boss.setVisible(true);
             bossHealth();
         }
+            if(lastFirstAidKit + 25000 < System.currentTimeMillis()) {
+                firstAidKiT=new FirstAidKiT();
+                firstAidKiT.checkVisibleFirstAidKit();
+                firstAidKiT.setVisible(true);
+                lastFirstAidKit = System.currentTimeMillis();
+            }
+        if(lastAsteroid + 10000 < System.currentTimeMillis()) {
+            asteroids.add(new Asteroid());
+            lastAsteroid = System.currentTimeMillis();
+        }
+        for (int i = 0; i < asteroids.size();i++){
+            asteroids.get(i).move();
+            if (asteroids.size() > 4)
+                asteroids.remove(asteroids.size()-1);
+        }
 
-        repaint();
+            firstAidKit();
+            addLife();
+            repaint();
     }
 
 
@@ -279,8 +299,9 @@ public class GameWidok extends JPanel implements ActionListener {
     }
 
     private void addLife() {
-        if (ship.rectangle().intersects(firstAidKiT.rectangle())) {
+        if (ship.rectangle().intersects(firstAidKiT.rectangle()) && firstAidKiT.isVisible()) {
             livePlayer.add(livePlayer.size() + 1);
+            firstAidKiT.setVisible(false);
         }
     }
 
@@ -433,6 +454,11 @@ public class GameWidok extends JPanel implements ActionListener {
         g2d.drawImage(Asteroid, at1, this);
 
 
+    }
+
+    private void asteroids(Graphics g,Asteroid as){
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.drawImage(as.asteroid, as.getAt(), this);
     }
 
 }
