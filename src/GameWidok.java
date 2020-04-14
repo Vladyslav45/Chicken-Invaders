@@ -54,9 +54,9 @@ public class GameWidok extends JPanel implements ActionListener {
         gameInit();
         CompletableFuture.runAsync(Music::musicOfTheGame);
         healthBoss = new JPanel();
-        healthBossBar = new JProgressBar(0,15);
-        healthBoss.setBounds(400,15,250,20);
-        healthBossBar.setPreferredSize(new Dimension(250,20));
+        healthBossBar = new JProgressBar(0, 15);
+        healthBoss.setBounds(400, 15, 250, 20);
+        healthBossBar.setPreferredSize(new Dimension(250, 20));
         healthBoss.setVisible(false);
         scoreLabel = new JLabel();
         scoreLabel.setBounds(20, 20, 100, 20);
@@ -140,7 +140,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
     }
 
-    private void asteroids(Graphics g,Asteroid as){
+    private void asteroids(Graphics g, Asteroid as) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(as.asteroid, as.getAt(), this);
     }
@@ -182,8 +182,8 @@ public class GameWidok extends JPanel implements ActionListener {
         if (firstAidKiT.isVisible()) {
             g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
         }
-        for (Asteroid asteroid1 : asteroids){
-            asteroids(g,asteroid1);
+        for (Asteroid asteroid1 : asteroids) {
+            asteroids(g, asteroid1);
         }
 
 
@@ -222,41 +222,43 @@ public class GameWidok extends JPanel implements ActionListener {
             }
             shotPlayer();
             shotChickens();
-        }else {
-           // shotBoss();
+        } else {
+            // shotBoss();
             boss.setVisible(true);
             bossHealth();
         }
-            if(lastFirstAidKit + 25000 < System.currentTimeMillis()) {
-                firstAidKiT=new FirstAidKiT();
-                firstAidKiT.checkVisibleFirstAidKit();
-                firstAidKiT.setVisible(true);
-                lastFirstAidKit = System.currentTimeMillis();
-            }
-        if(lastAsteroid + 10000 < System.currentTimeMillis()) {
+        if (lastFirstAidKit + 25000 < System.currentTimeMillis()) {
+            firstAidKiT = new FirstAidKiT();
+            firstAidKiT.checkVisibleFirstAidKit();
+            firstAidKiT.setVisible(true);
+            lastFirstAidKit = System.currentTimeMillis();
+        }
+        if (lastAsteroid + 10000 < System.currentTimeMillis()) {
             asteroids.add(new Asteroid());
             lastAsteroid = System.currentTimeMillis();
 
         }
-        for (int i = 0; i < asteroids.size();i++){
+        for (int i = 0; i < asteroids.size(); i++) {
             asteroids.get(i).move();
 
         }
 
-        if (asteroids.size()>0){
+        if (asteroids.size() > 0) {
             for (Asteroid a : asteroids) {
-                if (ship.rectangle().intersects(a.rectangle()) && a.isVisible()){
+                if (ship.rectangle().intersects(a.rectangle()) && a.isVisible()) {
                     livePlayer.remove(livePlayer.size() - 1);
                     a.setVisible(false);
                     Music.musicExplosion();
-                }
 
+                    if (livePlayer.isEmpty())
+                        gameLose();
+                }
             }
         }
 
-            firstAidKit();
-            addLife();
-            repaint();
+        firstAidKit();
+        addLife();
+        repaint();
     }
 
 
@@ -364,6 +366,8 @@ public class GameWidok extends JPanel implements ActionListener {
                         livePlayer.remove(livePlayer.size() - 1);
                         shotChicken.setDestroyed(true);
                         Music.musicExplosion();
+
+
                         if (livePlayer.isEmpty())
                             gameLose();
 
