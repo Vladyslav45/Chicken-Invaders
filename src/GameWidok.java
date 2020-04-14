@@ -248,6 +248,7 @@ public class GameWidok extends JPanel implements ActionListener {
                 if (ship.rectangle().intersects(a.rectangle()) && a.isVisible()){
                     livePlayer.remove(livePlayer.size() - 1);
                     a.setVisible(false);
+                    Music.musicExplosion();
                 }
 
             }
