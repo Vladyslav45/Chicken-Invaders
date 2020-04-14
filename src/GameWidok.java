@@ -256,39 +256,52 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
 
-        firstAidKit();
-        addLife();
+
+        if (ship.rectangle().intersects(boss.rectangle()) && boss.isVisible()) {
+            livePlayer.remove(livePlayer.size() - 1);
+
+            Music.musicExplosion();
+
+            if (livePlayer.isEmpty())
+                gameLose();
+        }
+    
+    firstAidKit();
+
+    addLife();
+
+    repaint();
+}
+
+
+public class keyPressPlayer extends KeyAdapter {
+    private long lastShoot = System.currentTimeMillis();
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int code = e.getKeyCode();
+        if (code == KeyEvent.VK_LEFT && ship.wspx + 20 > 0) {
+            ship.wspx -= 15;
+        }
+        if (code == KeyEvent.VK_RIGHT && ship.wspx + 65 < getWidth()) {
+            ship.wspx += 15;
+        }
+        if (code == KeyEvent.VK_UP && ship.wspy > 0) {
+            ship.wspy -= 15;
+        }
+        if (code == KeyEvent.VK_DOWN && ship.wspy + 70 < getHeight()) {
+            ship.wspy += 15;
+        }
+
+        if (code == KeyEvent.VK_SPACE && lastShoot + 500 < System.currentTimeMillis()) {
+            shots.add(new Shot(ship.wspx + 30, ship.wspy - 20, 7));
+            Music.musicShoot();
+            lastShoot = System.currentTimeMillis();
+        }
         repaint();
     }
 
-
-    public class keyPressPlayer extends KeyAdapter {
-        private long lastShoot = System.currentTimeMillis();
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            int code = e.getKeyCode();
-            if (code == KeyEvent.VK_LEFT && ship.wspx + 20 > 0) {
-                ship.wspx -= 15;
-            }
-            if (code == KeyEvent.VK_RIGHT && ship.wspx + 65 < getWidth()) {
-                ship.wspx += 15;
-            }
-            if (code == KeyEvent.VK_UP && ship.wspy > 0) {
-                ship.wspy -= 15;
-            }
-            if (code == KeyEvent.VK_DOWN && ship.wspy + 70 < getHeight()) {
-                ship.wspy += 15;
-            }
-
-            if (code == KeyEvent.VK_SPACE && lastShoot + 500 < System.currentTimeMillis()) {
-                shots.add(new Shot(ship.wspx + 30, ship.wspy - 20, 7));
-                Music.musicShoot();
-                lastShoot = System.currentTimeMillis();
-            }
-            repaint();
-        }
-    }
+}
 
     private void firstAidKit() {
         if (firstAidKiT.isVisible()) {
