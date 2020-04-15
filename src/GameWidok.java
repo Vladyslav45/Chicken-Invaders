@@ -191,7 +191,7 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
         if (ammo.isVisible()) {
-            g.drawImage(ammo.getImg(), ammo.getPosX(), ammo.getPosY(), 40, 40, this);
+            g.drawImage(ammo.getImg(), ammo.getPosX(), ammo.getPosY(), 40, 12, this);
         }
 
 
