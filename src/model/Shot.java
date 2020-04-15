@@ -10,6 +10,7 @@ public class Shot {
     private int posX;
     private int posY;
     public BufferedImage img;
+    public BufferedImage img1;
     public int go;
     private boolean visible;
 
@@ -19,9 +20,10 @@ public class Shot {
         this.go = go;
         visible = true;
         File imageFile = new File("image\\blue-laser.png");
+        File imageFile1 = new File("image\\blue-laser1.png");
         try {
             img = ImageIO.read(imageFile);
-
+            img1 = ImageIO.read(imageFile1);
         } catch (IOException e) {
             System.err.println("Blad odczytu obrazka");
             e.printStackTrace();

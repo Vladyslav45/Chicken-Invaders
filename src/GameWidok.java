@@ -25,6 +25,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private Ship ship;
     private Boss boss = new Boss();
     private FirstAidKiT firstAidKiT = new FirstAidKiT();
+    private Ammo ammo;
     private ArrayList<Integer> livePlayer;
     private ChickensMapGenerator chickensMapGenerator;
     private ArrayList<Shot> shots;
@@ -41,6 +42,8 @@ public class GameWidok extends JPanel implements ActionListener {
     private long lastFirstAidKit;
     private long lastAsteroid;
     private long bossTouchShip;
+    private long lastAmmo;
+    private long timeNewAmmo;
     private ArrayList<Asteroid> asteroids;
 
     public GameWidok() {
@@ -52,7 +55,7 @@ public class GameWidok extends JPanel implements ActionListener {
         timer.start();
         lastFirstAidKit = System.currentTimeMillis();
         lastAsteroid = System.currentTimeMillis();
-
+        lastAmmo = System.currentTimeMillis();
         gameInit();
         CompletableFuture.runAsync(Music::musicOfTheGame);
         healthBoss = new JPanel();
@@ -139,6 +142,8 @@ public class GameWidok extends JPanel implements ActionListener {
         shots = new ArrayList<>();
         boss.checkVisible();
         firstAidKiT.checkVisibleFirstAidKit();
+        ammo = new Ammo();
+        ammo.checkVisibleAmmo();
 
     }
 
@@ -157,7 +162,11 @@ public class GameWidok extends JPanel implements ActionListener {
             g.drawImage(ship.image, ship.wspx, ship.wspy, 40, 40, this);
         }
         for (Shot shot : shots) {
-            g.drawImage(shot.img, shot.getPosX(), shot.getPosY(), 10, 30, this);
+            if ( timeNewAmmo + 4000 > System.currentTimeMillis()){
+                g.drawImage(shot.img1, shot.getPosX(), shot.getPosY(), 10, 30, this);
+
+            }else
+                g.drawImage(shot.img, shot.getPosX(), shot.getPosY(), 10, 30, this);
         }
 
         for (int i = 0; i <= livePlayer.size(); i++) {
@@ -178,6 +187,9 @@ public class GameWidok extends JPanel implements ActionListener {
             if (boss.isVisible()) {
                 g.drawImage(boss.getImg(), boss.getPosX(), boss.getPosY(), 120, 120, this);
             }
+        }
+        if (ammo.isVisible()) {
+            g.drawImage(ammo.getImg(), ammo.getPosX(), ammo.getPosY(), 40, 40, this);
         }
 
 
@@ -235,6 +247,15 @@ public class GameWidok extends JPanel implements ActionListener {
             firstAidKiT.setVisible(true);
             lastFirstAidKit = System.currentTimeMillis();
         }
+        if (lastAmmo + 30000 < System.currentTimeMillis()) {
+            ammo = new Ammo();
+            ammo.checkVisibleAmmo();
+            ammo.setVisible(true);
+            lastAmmo = System.currentTimeMillis();
+        }
+        if (ammo.isVisible()){
+            ammo.move();
+        }
 
         if (boss.isVisible()){
             timeAsteroid = 4000;
@@ -277,6 +298,12 @@ public class GameWidok extends JPanel implements ActionListener {
         if (bossTouchShip + 2000 < System.currentTimeMillis()) {
             boss.setTouch(true);
         }
+
+        if (ship.rectangle().intersects(ammo.rectangle())){
+            timeNewAmmo = System.currentTimeMillis();
+            ammo.setVisible(false); 
+        }
+
     firstAidKit();
 
     addLife();
