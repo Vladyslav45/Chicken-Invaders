@@ -36,7 +36,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private JPanel healthBoss;
     private JProgressBar healthBossBar;
     private int countBossHealth = 15;
-
+    private int timeAsteroid;
     private int timerDelay = 17;
     private long lastFirstAidKit;
     private long lastAsteroid;
@@ -235,7 +235,14 @@ public class GameWidok extends JPanel implements ActionListener {
             firstAidKiT.setVisible(true);
             lastFirstAidKit = System.currentTimeMillis();
         }
-        if (lastAsteroid + 5000 < System.currentTimeMillis()) {
+
+        if (boss.isVisible()){
+            timeAsteroid = 4000;
+        }else
+            timeAsteroid = 8000;
+
+
+        if (lastAsteroid + timeAsteroid < System.currentTimeMillis()) {
             asteroids.add(new Asteroid());
             lastAsteroid = System.currentTimeMillis();
 
