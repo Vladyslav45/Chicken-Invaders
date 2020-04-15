@@ -11,8 +11,8 @@ import java.util.Random;
 public class Asteroid {
     private AffineTransform at;
     public BufferedImage asteroid;
-    private int rotate = 0;
-    private int przesun = 1;
+    private int rotate = 10;
+    private int przesun = 10;
     Random random = new Random();
     private int randomMove = random.nextInt(300) * 2;
     private int posX;
@@ -47,7 +47,7 @@ public class Asteroid {
     }
 
     public void move(){
-        posX = randomMove+(przesun/2);
+        posX = randomMove+(przesun / 4);
         posY = 20 + przesun;
         at = AffineTransform.getTranslateInstance(getPosX(), getPosY() );
         at.rotate(Math.toRadians(rotate++), getWidth() / 2 , getHeight() / 2);

@@ -40,6 +40,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private int timerDelay = 17;
     private long lastFirstAidKit;
     private long lastAsteroid;
+    private long bossTouchShip;
     private ArrayList<Asteroid> asteroids;
 
     public GameWidok() {
@@ -51,6 +52,7 @@ public class GameWidok extends JPanel implements ActionListener {
         timer.start();
         lastFirstAidKit = System.currentTimeMillis();
         lastAsteroid = System.currentTimeMillis();
+
         gameInit();
         CompletableFuture.runAsync(Music::musicOfTheGame);
         healthBoss = new JPanel();
@@ -233,7 +235,7 @@ public class GameWidok extends JPanel implements ActionListener {
             firstAidKiT.setVisible(true);
             lastFirstAidKit = System.currentTimeMillis();
         }
-        if (lastAsteroid + 10000 < System.currentTimeMillis()) {
+        if (lastAsteroid + 5000 < System.currentTimeMillis()) {
             asteroids.add(new Asteroid());
             lastAsteroid = System.currentTimeMillis();
 
@@ -257,15 +259,17 @@ public class GameWidok extends JPanel implements ActionListener {
         }
 
 
-        if (ship.rectangle().intersects(boss.rectangle()) && boss.isVisible()) {
+        if (ship.rectangle().intersects(boss.rectangle()) && boss.isTouch()) {
             livePlayer.remove(livePlayer.size() - 1);
-
+            boss.setTouch(false);
             Music.musicExplosion();
-
+            bossTouchShip = System.currentTimeMillis();
             if (livePlayer.isEmpty())
                 gameLose();
         }
-    
+        if (bossTouchShip + 2000 < System.currentTimeMillis()) {
+            boss.setTouch(true);
+        }
     firstAidKit();
 
     addLife();
@@ -280,10 +284,10 @@ public class keyPressPlayer extends KeyAdapter {
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-        if (code == KeyEvent.VK_LEFT && ship.wspx + 20 > 0) {
+        if (code == KeyEvent.VK_LEFT && ship.wspx - 5 > 0) {
             ship.wspx -= 15;
         }
-        if (code == KeyEvent.VK_RIGHT && ship.wspx + 65 < getWidth()) {
+        if (code == KeyEvent.VK_RIGHT && ship.wspx + 45 < getWidth()) {
             ship.wspx += 15;
         }
         if (code == KeyEvent.VK_UP && ship.wspy > 0) {
@@ -294,7 +298,7 @@ public class keyPressPlayer extends KeyAdapter {
         }
 
         if (code == KeyEvent.VK_SPACE && lastShoot + 500 < System.currentTimeMillis()) {
-            shots.add(new Shot(ship.wspx + 30, ship.wspy - 20, 7));
+            shots.add(new Shot(ship.wspx+15, ship.wspy-30, 7));
             Music.musicShoot();
             lastShoot = System.currentTimeMillis();
         }

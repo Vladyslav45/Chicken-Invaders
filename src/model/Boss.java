@@ -11,11 +11,16 @@ public class Boss {
     private int posY;
     private BufferedImage img;
     private boolean visible;
+    private boolean touch;
+
+
+
     private static int go = 5;
     private static int goDown = 1;
 
     public Boss(){
         visible = false;
+        touch = true;
         File imageFile = new File("image\\boss.png");
         try {
             img = ImageIO.read(imageFile);
@@ -24,6 +29,13 @@ public class Boss {
             System.err.println("Blad odczytu obrazka");
             e.printStackTrace();
         }
+    }
+    public boolean isTouch() {
+        return touch;
+    }
+
+    public void setTouch(boolean touch) {
+        this.touch = touch;
     }
 
     public Rectangle rectangle() {

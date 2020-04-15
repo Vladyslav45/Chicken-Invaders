@@ -14,7 +14,7 @@ public class FirstAidKiT {
     private boolean visible;
     private static int goDown = 0;
     Random random = new Random();
-    private double randomMove = random.nextInt(400) * 2;
+    private double randomMove = random.nextInt(760) + 20;
 
 
     public FirstAidKiT() {
