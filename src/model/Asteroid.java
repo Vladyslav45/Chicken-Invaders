@@ -37,7 +37,9 @@ public class Asteroid {
 
 }
 
-
+    public void destructionAsteroid() {
+        visible = false;
+    }
     public int getPosX() {
         return posX;
     }
@@ -69,4 +71,5 @@ public class Asteroid {
     public Rectangle rectangle(){
         return new Rectangle(getPosX(),getPosY(), asteroid.getWidth(),asteroid.getHeight());
     }
+
 }

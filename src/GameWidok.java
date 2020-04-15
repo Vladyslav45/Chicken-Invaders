@@ -45,6 +45,8 @@ public class GameWidok extends JPanel implements ActionListener {
     private long lastAmmo;
     private long timeNewAmmo;
     private ArrayList<Asteroid> asteroids;
+    private Asteroid asteroid = new Asteroid();
+
 
     public GameWidok() {
         addKeyListener(new keyPressPlayer());
@@ -196,8 +198,10 @@ public class GameWidok extends JPanel implements ActionListener {
         if (firstAidKiT.isVisible()) {
             g.drawImage(firstAidKiT.getImg(), firstAidKiT.getPosX(), firstAidKiT.getPosY(), 40, 40, this);
         }
-        for (Asteroid asteroid1 : asteroids) {
-            asteroids(g, asteroid1);
+        for (Asteroid a : asteroids) {
+          if(a.isVisible()){
+              asteroids(g,a);
+          }
         }
 
 
@@ -286,7 +290,6 @@ public class GameWidok extends JPanel implements ActionListener {
             }
         }
 
-
         if (ship.rectangle().intersects(boss.rectangle()) && boss.isTouch()) {
             livePlayer.remove(livePlayer.size() - 1);
             boss.setTouch(false);
@@ -373,6 +376,7 @@ public class keyPressPlayer extends KeyAdapter {
     private void shotPlayer() {
         shots.removeIf(this::checkCollision);
         shots.removeIf(this::check);
+        shots.removeIf(this::checkColilisionAsteroid);
     }
 
     private boolean check(Shot shot) {
@@ -398,7 +402,20 @@ public class keyPressPlayer extends KeyAdapter {
         }
         return false;
     }
+private boolean checkColilisionAsteroid (Shot shot) {
 
+    for (Asteroid a : asteroids) {
+        if (shot.rectangle().intersects(a.rectangle()) && a.isVisible()) {
+            a.setVisible(false);
+          asteroid.destructionAsteroid();
+            Music.musicExplosion();
+            score += 5000;
+            scoreLabel.setText("Score: " + score);
+            return true;
+        }
+    }
+    return false;
+}
     private void shotChickens() {
         for (Chicken[] chickens : chickenList) {
             for (Chicken chicken : chickens) {

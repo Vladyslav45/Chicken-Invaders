@@ -14,6 +14,11 @@ public class Ship {
     public int wspx=500;
     public int wspy=700;
     public BufferedImage image;
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
     private boolean visible;
 
     public Ship() {
