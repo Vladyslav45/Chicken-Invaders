@@ -1,9 +1,7 @@
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.Player;
+import music.Music;
 
-import javax.sound.sampled.*;
 import javax.swing.*;
-import java.io.*;
+import java.awt.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -15,22 +13,20 @@ public class StartWidok extends JFrame {
 
     private JButton buttonStart;
     private JButton buttonRanking;
-    private Player player;
-    private boolean loop = true;
 
 
     public StartWidok() {
         final int[] check = {-1};
         setLayout(null);
+        setUndecorated(true);
+        initMenuBar();
         setVisible(true);
         setLocation(500, 250);
         setSize(800, 600);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setTitle("Chicken Invaders");
         setIconImage(new ImageIcon("image\\chicken0.png").getImage());
 
-        CompletableFuture.runAsync(this::music);
+        CompletableFuture.runAsync(Music::music);
 
         buttonStart = new JButton();
         buttonRanking = new JButton();
@@ -67,11 +63,11 @@ public class StartWidok extends JFrame {
             }
 
             rankingMap.put(nickname, 0);
-            loop = false;
-            player.close();
-            musicAttack();
+            Music.setLoop(false);
+            Music.getPlayer().close();
+            Music.musicAttack();
             dispose();
-            new GameWindow().setVisible(true);
+            new GameWindow();
         });
 
         buttonRanking.addActionListener(e -> {
@@ -98,27 +94,42 @@ public class StartWidok extends JFrame {
         add(background);
     }
 
-    private void music() {
-        try {
-            do {
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream("music\\ImperialMarch.mp3"));
-                player = new Player(bufferedInputStream);
-                player.play();
-            } while (loop);
-        } catch (IOException | JavaLayerException e) {
-            e.printStackTrace();
-        }
-    }
+    public void initMenuBar(){
+        JMenuBar jMenuBar = new JMenuBar();
+        JButton iconified = new JButton();
+        JButton frame = new JButton();
+        JButton close = new JButton();
+        JMenu jMenu = new JMenu();
+        jMenu.setText("Chickens Invaders");
+        jMenu.setIcon(new ImageIcon("image\\chicken.png"));
+        jMenu.setEnabled(false);
+        jMenuBar.setPreferredSize(new Dimension(getWidth(), 30));
+        jMenuBar.add(jMenu);
+        jMenuBar.add(Box.createGlue());
 
-    private void musicAttack() {
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\chicken2.wav").getAbsoluteFile());
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            clip.start();
-        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException s) {
-            s.printStackTrace();
-        }
+        iconified.setIcon(new ImageIcon("image\\minimize.png"));
+        iconified.setOpaque(false);
+        iconified.setContentAreaFilled(false);
+        iconified.setBorderPainted(false);
+        iconified.addActionListener(e -> setState(Frame.ICONIFIED));
+
+        frame.setIcon(new ImageIcon("image\\window.png"));
+        frame.setOpaque(false);
+        frame.setContentAreaFilled(false);
+        frame.setBorderPainted(false);
+        frame.setEnabled(false);
+
+        close.setIcon(new ImageIcon("image\\close.png"));
+        close.setOpaque(false);
+        close.setContentAreaFilled(false);
+        close.setBorderPainted(false);
+        close.addActionListener(e -> System.exit(0));
+
+
+        jMenuBar.add(iconified);
+        jMenuBar.add(frame);
+        jMenuBar.add(close);
+        setJMenuBar(jMenuBar);
     }
 
 }

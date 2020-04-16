@@ -21,9 +21,9 @@ public class GameWidok extends JPanel implements ActionListener {
     public JButton pauseButton;
     private JButton resumeButton;
     private JButton closeButton;
-    private Timer timer;
+    static Timer timer;
     private Ship ship;
-    private Boss boss = new Boss();
+    private Boss boss;
     private FirstAidKiT firstAidKiT = new FirstAidKiT();
     private Ammo ammo;
     private ArrayList<Integer> livePlayer;
@@ -38,7 +38,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private JProgressBar healthBossBar;
     private int countBossHealth = 15;
     private int timeAsteroid;
-    private int timerDelay = 17;
+    private int timerDelay = 13;
     private long lastFirstAidKit;
     private long lastAsteroid;
     private long bossTouchShip;
@@ -142,11 +142,11 @@ public class GameWidok extends JPanel implements ActionListener {
         asteroids = new ArrayList<>();
         ship = new Ship();
         shots = new ArrayList<>();
-        boss.checkVisible();
         firstAidKiT.checkVisibleFirstAidKit();
         ammo = new Ammo();
+        boss = new Boss();
+        boss.checkVisible();
         ammo.checkVisibleAmmo();
-
     }
 
     private void asteroids(Graphics g, Asteroid as) {
@@ -419,9 +419,9 @@ private boolean checkColilisionAsteroid (Shot shot) {
     private void shotChickens() {
         for (Chicken[] chickens : chickenList) {
             for (Chicken chicken : chickens) {
-                int shot = (int) (Math.random() * 320 + 1);
+                int shot = (int) (Math.random() * 150 + 1);
                 Chicken.ShotChicken shotChicken = chicken.getShotChicken();
-                if (shot == 320 && chicken.isVisible() && shotChicken.isDestroyed()) {
+                if (shot == 150 && chicken.isVisible() && shotChicken.isDestroyed()) {
                     Music.musicShootChicken();
                     shotChicken.setDestroyed(false);
                     shotChicken.setX(chicken.getPosX());

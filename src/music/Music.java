@@ -13,6 +13,7 @@ public class Music {
 
     private static Clip clipGameWin;
     private static Clip clipGameLose;
+    private static Clip clipShoot;
     private static Player player;
     private static boolean loop = true;
 
@@ -33,6 +34,29 @@ public class Music {
     }
 
 
+    public static void music() {
+        try {
+            do {
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream("music\\ImperialMarch.mp3"));
+                player = new Player(bufferedInputStream);
+                player.play();
+            } while (loop);
+        } catch (IOException | JavaLayerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void musicAttack() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\chicken2.wav").getAbsoluteFile());
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException s) {
+            s.printStackTrace();
+        }
+    }
+
     public static void musicShootChicken2() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\shotChicken.wav").getAbsoluteFile());
@@ -49,7 +73,7 @@ public class Music {
     public static void musicShoot() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\shoot.wav").getAbsoluteFile());
-            Clip clipShoot = AudioSystem.getClip();
+            clipShoot = AudioSystem.getClip();
             clipShoot.open(audioInputStream);
             FloatControl floatControl = (FloatControl) clipShoot.getControl(FloatControl.Type.MASTER_GAIN);
             floatControl.setValue(-5f);

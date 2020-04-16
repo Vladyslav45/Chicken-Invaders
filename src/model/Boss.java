@@ -13,10 +13,8 @@ public class Boss {
     private boolean visible;
     private boolean touch;
 
-
-
-    private static int go = 5;
-    private static int goDown = 1;
+    private static double go;
+    private static double goDown;
 
     public Boss(){
         visible = false;
@@ -63,28 +61,28 @@ public class Boss {
     }
 
     public void move(){
-        posX = posX + (int) (Math.random() * 3 + 0) + go;
-        posY = posY + (int) (Math.random() * 3 + 0) + goDown;
+        posX = (int) (posX + go);
+        posY = (int) (posY + goDown);
 
-        if (posX < 20){
-            go += 1;
+        if (posX < 180){
+            go += 0.8;
         }
-        if (posX > 865){
-            go -= 1;
+        if (posX > 650){
+            go -= 0.8;
         }
 
         if (posY < 20){
-            goDown += 1;
+            goDown += 0.8;
         }
         if (posY > 650){
-            goDown -= 1;
+            goDown -= 0.8;
         }
     }
 
 
     public void checkVisible(){
         if (!visible){
-            posX = 0;
+            posX = -100;
             posY = 0;
         }
     }
