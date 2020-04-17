@@ -183,7 +183,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
         if (chickensAlive == 0) {
             if (boss.isVisible()) {
-                g.drawImage(boss.getImg(), boss.getPosX(), boss.getPosY(), 120, 120, this);
+                g.drawImage(boss.getImg(), boss.getPosX(), boss.getPosY(), 160, 120, this);
             }
         }
         if (ammo.isVisible()) {
@@ -285,6 +285,7 @@ public class GameWidok extends JPanel implements ActionListener {
         if (ship.rectangle().intersects(boss.rectangle()) && boss.isTouch()) {
             livePlayer.remove(livePlayer.size() - 1);
             boss.setTouch(false);
+            Music.musicLightSaber();
             Music.musicExplosion();
             bossTouchShip = System.currentTimeMillis();
         }

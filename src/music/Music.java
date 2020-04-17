@@ -70,6 +70,20 @@ public class Music {
         }
     }
 
+    public static void musicLightSaber() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\mieczSwietlny.wav").getAbsoluteFile());
+            clipShoot = AudioSystem.getClip();
+            clipShoot.open(audioInputStream);
+            FloatControl floatControl = (FloatControl) clipShoot.getControl(FloatControl.Type.MASTER_GAIN);
+            floatControl.setValue(-1f);
+            clipShoot.start();
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
+            h.printStackTrace();
+        }
+    }
+
+
     public static void musicShoot() {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("music\\shoot.wav").getAbsoluteFile());
@@ -123,7 +137,7 @@ public class Music {
             clipGameWin = AudioSystem.getClip();
             clipGameWin.open(audioInputStream);
             FloatControl floatControl = (FloatControl) clipGameWin.getControl(FloatControl.Type.MASTER_GAIN);
-            floatControl.setValue(-10f);
+            floatControl.setValue(-13f);
             clipGameWin.start();
         } catch (IOException | UnsupportedAudioFileException | LineUnavailableException h) {
             h.printStackTrace();
