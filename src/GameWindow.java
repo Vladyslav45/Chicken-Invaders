@@ -11,9 +11,9 @@ public class GameWindow extends JFrame{
         setSize(1000,800);
         initMenuBar();
         setIconImage(new ImageIcon("image\\chicken0.png").getImage());
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
+        ConnectionJDBC.con();
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -29,9 +29,24 @@ public class GameWindow extends JFrame{
         JButton frame = new JButton();
         JButton close = new JButton();
         JMenu jMenu = new JMenu();
+        JMenuItem jMenuItem = new JMenuItem("Exit");
+        jMenuItem.addActionListener(e -> System.exit(0));
+
         jMenu.setText("Chickens Invaders");
         jMenu.setIcon(new ImageIcon("image\\chicken.png"));
-        jMenu.setEnabled(false);
+        jMenu.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                GameWidok.timer.stop();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                GameWidok.timer.start();
+            }
+        });
+        jMenu.add(jMenuItem);
+
         jMenuBar.setPreferredSize(new Dimension(getWidth(), 30));
         jMenuBar.add(jMenu);
         jMenuBar.add(Box.createGlue());
@@ -42,8 +57,8 @@ public class GameWindow extends JFrame{
         iconified.setBorderPainted(false);
         iconified.setFocusable(false);
         iconified.addActionListener(e -> {
-            setState(Frame.ICONIFIED);
             GameWidok.timer.stop();
+            setState(Frame.ICONIFIED);
         });
 
         frame.setIcon(new ImageIcon("image\\window.png"));

@@ -4,15 +4,10 @@ import music.Music;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
 
@@ -30,7 +25,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private ChickensMapGenerator chickensMapGenerator;
     private ArrayList<Shot> shots;
     static Chicken[][] chickenList;
-    private int score;
+    public static int score;
     private JLabel scoreLabel;
     private int chickensAlive = 55;
 
@@ -38,7 +33,7 @@ public class GameWidok extends JPanel implements ActionListener {
     private JProgressBar healthBossBar;
     private int countBossHealth = 15;
     private int timeAsteroid;
-    private int timerDelay = 13;
+    private int timerDelay = 16;
     private long lastFirstAidKit;
     private long lastAsteroid;
     private long bossTouchShip;
@@ -109,6 +104,7 @@ public class GameWidok extends JPanel implements ActionListener {
                     SwingUtilities.windowForComponent(GameWidok.this).dispose();
                     Music.setLoop(false);
                     Music.getPlayer().close();
+                    ConnectionJDBC.save();
                     StartWidok.rankingMap.put(StartWidok.nickname, score);
                     new StartWidok().setVisible(true);
                 });
@@ -241,7 +237,6 @@ public class GameWidok extends JPanel implements ActionListener {
             shotPlayer();
             shotChickens();
         } else {
-            // shotBoss();
             boss.setVisible(true);
             bossHealth();
         }
@@ -283,9 +278,6 @@ public class GameWidok extends JPanel implements ActionListener {
                     livePlayer.remove(livePlayer.size() - 1);
                     a.setVisible(false);
                     Music.musicExplosion();
-
-                    if (livePlayer.isEmpty())
-                        gameLose();
                 }
             }
         }
@@ -295,8 +287,6 @@ public class GameWidok extends JPanel implements ActionListener {
             boss.setTouch(false);
             Music.musicExplosion();
             bossTouchShip = System.currentTimeMillis();
-            if (livePlayer.isEmpty())
-                gameLose();
         }
         if (bossTouchShip + 2000 < System.currentTimeMillis()) {
             boss.setTouch(true);
@@ -310,7 +300,8 @@ public class GameWidok extends JPanel implements ActionListener {
     firstAidKit();
 
     addLife();
-
+        if (livePlayer.isEmpty())
+            gameLose();
     repaint();
 }
 
@@ -434,12 +425,6 @@ private boolean checkColilisionAsteroid (Shot shot) {
                         livePlayer.remove(livePlayer.size() - 1);
                         shotChicken.setDestroyed(true);
                         Music.musicExplosion();
-
-
-                        if (livePlayer.isEmpty())
-                            gameLose();
-
-
                     }
                 }
                 if (!shotChicken.isDestroyed()) {
@@ -451,32 +436,6 @@ private boolean checkColilisionAsteroid (Shot shot) {
             }
         }
     }
-
-//    private void shotBoss() {
-//        int shots = (int) (Math.random() * 320 + 1);
-//        Boss.Bullet bullet = boss.getBullet();
-//        if (shots == 320 && boss.isVisible() && bullet.isDestroy()) {
-//            bullet.setDestroy(false);
-//            bullet.setX(boss.getPosX());
-//            bullet.setY(boss.getPosY());
-//        }
-//
-//        if (ship.isVisible()){
-//            if(ship.rectangle().intersects((bullet.rectangleBullet()))){
-//                livePlayer.remove(livePlayer.size()-1);
-//                bullet.setDestroy(true);
-//
-//                if (livePlayer.isEmpty())
-//                    gameLose();
-//            }
-//        }
-//        if(!bullet.isDestroy()){
-//            bullet.setY(bullet.getY()+2);
-//            if (bullet.getY() >=750){
-//                bullet.setDestroy(true);
-//            }
-//        }
-//    }
 
     private void gameWin() {
         Music.musicGameWin();
@@ -493,6 +452,7 @@ private boolean checkColilisionAsteroid (Shot shot) {
             StartWidok.rankingMap.put(StartWidok.nickname, score);
             Music.setLoop(false);
             Music.getPlayer().close();
+            ConnectionJDBC.save();
             SwingUtilities.windowForComponent(this).dispose();
             new StartWidok().setVisible(true);
         }
@@ -515,6 +475,7 @@ private boolean checkColilisionAsteroid (Shot shot) {
             StartWidok.rankingMap.put(StartWidok.nickname, score);
             Music.setLoop(false);
             Music.getPlayer().close();
+            ConnectionJDBC.save();
             SwingUtilities.windowForComponent(this).dispose();
             new StartWidok().setVisible(true);
         }
