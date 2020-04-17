@@ -142,6 +142,7 @@ public class GameWidok extends JPanel implements ActionListener {
         ammo = new Ammo();
         boss = new Boss();
         boss.checkVisible();
+        score = 0;
         ammo.checkVisibleAmmo();
     }
 

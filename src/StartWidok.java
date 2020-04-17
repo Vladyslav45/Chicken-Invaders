@@ -56,11 +56,14 @@ public class StartWidok extends JFrame {
                 nickname = JOptionPane.showInputDialog(null, "Enter nickname");
                 if (nickname == null)
                     return;
-                if (nickname.length() > 0) {
+                if (!ConnectionJDBC.check(nickname)){
+                    JOptionPane.showMessageDialog(null, "Nickname is already used!");
+                } else if (nickname.length() > 0) {
                     check[0]++;
                 } else {
                     JOptionPane.showMessageDialog(null, "You didn't enter a nickname");
                 }
+
 
             }
 

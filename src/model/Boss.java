@@ -19,7 +19,7 @@ public class Boss {
     public Boss(){
         visible = false;
         touch = true;
-        File imageFile = new File("image\\boss.png");
+        File imageFile = new File("image\\bossn.png");
         try {
             img = ImageIO.read(imageFile);
 
