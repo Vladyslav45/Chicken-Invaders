@@ -2,6 +2,9 @@ import music.Music;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -10,12 +13,12 @@ public class StartWidok extends JFrame {
     static Map<String, Integer> rankingMap = new HashMap<>();
     static String nickname;
 
-
     private JButton buttonStart;
     private JButton buttonRanking;
 
 
     public StartWidok() {
+        ConnectionJDBC.con();
         final int[] check = {-1};
         setLayout(null);
         setUndecorated(true);
@@ -27,7 +30,6 @@ public class StartWidok extends JFrame {
         setIconImage(new ImageIcon("image\\chicken0.png").getImage());
 
         CompletableFuture.runAsync(Music::music);
-
         buttonStart = new JButton();
         buttonRanking = new JButton();
 
@@ -71,6 +73,7 @@ public class StartWidok extends JFrame {
         });
 
         buttonRanking.addActionListener(e -> {
+            ConnectionJDBC.showRanking();
             int row = 0;
             JDialog jDialog = new JDialog(this, "Ranking");
             Map<String, Integer> sort = rankingMap.entrySet().stream().sorted(((o1, o2) -> o2.getValue().compareTo(o1.getValue()))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (o1, o2) -> o1, LinkedHashMap::new));
@@ -100,9 +103,23 @@ public class StartWidok extends JFrame {
         JButton frame = new JButton();
         JButton close = new JButton();
         JMenu jMenu = new JMenu();
+
+        JMenuItem github = new JMenuItem("GIT");
+        JMenuItem exit = new JMenuItem("Exit");
+        github.addActionListener(e -> {
+            try {
+                Desktop.getDesktop().browse(new URI("https://github.com/Vladyslav45/Chicken-Invaders"));
+            } catch (IOException | URISyntaxException e1) {
+                e1.printStackTrace();
+            }
+        });
+        exit.addActionListener(e -> System.exit(0));
+
         jMenu.setText("Chickens Invaders");
         jMenu.setIcon(new ImageIcon("image\\chicken.png"));
-        jMenu.setEnabled(false);
+        jMenu.add(github);
+        jMenu.add(exit);
+
         jMenuBar.setPreferredSize(new Dimension(getWidth(), 30));
         jMenuBar.add(jMenu);
         jMenuBar.add(Box.createGlue());
