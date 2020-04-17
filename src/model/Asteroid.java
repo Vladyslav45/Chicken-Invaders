@@ -18,6 +18,7 @@ public class Asteroid {
     private int posX;
     private int posY;
     private boolean visible;
+    private boolean touch;
 
     public boolean isVisible() {
         return visible;
@@ -29,6 +30,7 @@ public class Asteroid {
 
     public Asteroid(){
         visible = true;
+        touch = true;
     try {
         asteroid = ImageIO.read(new File("image\\Asteroid.png"));
     } catch (IOException ex) {
@@ -36,6 +38,13 @@ public class Asteroid {
     }
 
 }
+    public boolean isTouch() {
+        return touch;
+    }
+
+    public void setTouch(boolean touch) {
+        this.touch = touch;
+    }
 
     public void destructionAsteroid() {
         visible = false;

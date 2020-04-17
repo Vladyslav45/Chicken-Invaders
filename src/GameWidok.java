@@ -165,7 +165,7 @@ public class GameWidok extends JPanel implements ActionListener {
         }
         for (Shot shot : shots) {
             if ( timeNewAmmo + 4000 > System.currentTimeMillis()){
-                g.drawImage(shot.img1, shot.getPosX(), shot.getPosY(), 10, 30, this);
+                g.drawImage(shot.img1, shot.getPosX()-5, shot.getPosY(), 20, 30, this);
 
             }else
                 g.drawImage(shot.img, shot.getPosX(), shot.getPosY(), 10, 30, this);
@@ -304,7 +304,7 @@ public class GameWidok extends JPanel implements ActionListener {
 
         if (ship.rectangle().intersects(ammo.rectangle())){
             timeNewAmmo = System.currentTimeMillis();
-            ammo.setVisible(false); 
+            ammo.setVisible(false);
         }
 
     firstAidKit();
@@ -403,17 +403,16 @@ public class keyPressPlayer extends KeyAdapter {
         return false;
     }
 private boolean checkColilisionAsteroid (Shot shot) {
-
     for (Asteroid a : asteroids) {
         if (shot.rectangle().intersects(a.rectangle()) && a.isVisible()) {
-            a.setVisible(false);
-          asteroid.destructionAsteroid();
-            Music.musicExplosion();
-            score += 5000;
-            scoreLabel.setText("Score: " + score);
-            return true;
+                a.setVisible(false);
+                //asteroid.destructionAsteroid();
+                Music.musicExplosion();
+                score += 5000;
+                scoreLabel.setText("Score: " + score);
+                return true;
+            }
         }
-    }
     return false;
 }
     private void shotChickens() {
