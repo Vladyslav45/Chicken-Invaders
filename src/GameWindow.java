@@ -13,7 +13,6 @@ public class GameWindow extends JFrame{
         setIconImage(new ImageIcon("image\\chicken0.png").getImage());
         setLocationRelativeTo(null);
         setResizable(false);
-        ConnectionJDBC.con();
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
