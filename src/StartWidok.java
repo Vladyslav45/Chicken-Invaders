@@ -56,7 +56,7 @@ public class StartWidok extends JFrame {
                 nickname = JOptionPane.showInputDialog(null, "Enter nickname");
                 if (nickname == null)
                     return;
-                if (rankingMap.entrySet().stream().noneMatch(key -> key.getKey().equals(nickname))){
+                if (rankingMap.entrySet().stream().anyMatch(key -> key.getKey().equals(nickname))){
                     JOptionPane.showMessageDialog(null, "Nickname is already used!");
                 } else if (nickname.length() > 0) {
                     check[0]++;
