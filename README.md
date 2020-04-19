@@ -8,5 +8,13 @@ na wystrzelone przez wrogów lasery. Gracz musi walczyć nie tylko z wrogimi
 najzdzcami ale tez musi uważać, na przelatujące obok asteroidy. Na pomoc
 pogromcy Sithow, ruszają pojąwiające się apteczki, oraz lepsza amunicja.
 Po zestrzeleniu wszystkich kurczaków, pojawia się on ... Kurczakowy
-Darth Vader, który nie da się łątwo zabić.
+Darth Vader, który nie da się łatwo za wygraną.
+
+Sterownie:
+strzałki - lewo, prawo, góra, dół
+spacja - strzał
+esc - pauza
+
+Uruchomienie gry przycisk play, następnie podanie swojego nicka, po zatwierdzeniu
+uruchamia się nam gra.
 
