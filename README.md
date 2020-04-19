@@ -1,6 +1,7 @@
 # Chicken-Invaders
-Chicken Invaders - Chicken Strike Back
+<b>Chicken Invaders - Chicken Strike Back</b>
 
+Opis fabuły<br><br>
 Zadaniem gracza jest się wcielić w pilota statku kosmicznego,
 który ma walczyć z armią wyznawców Ciemnej Strony Mocy. Do pokonania
 wroga używamy laserów który uruchamiamy za pomocą (SPACJI). Uważać należy 
@@ -11,8 +12,8 @@ Po zestrzeleniu wszystkich kurczaków, pojawia się on ... Kurczakowy
 Darth Vader, który nie da się łatwo za wygraną.
 
 Sterownie:
-strzałki - lewo, prawo, góra, dół
-spacja - strzał
+strzałki - lewo, prawo, góra, dół <br>
+spacja - strzał <br>
 esc - pauza
 
 Uruchomienie gry przycisk play, następnie podanie swojego nicka, po zatwierdzeniu
