@@ -15,6 +15,7 @@ public class Boss {
 
     private static double go;
     private static double goDown;
+    private Bullet bullet;
 
     public Boss(){
         visible = false;
@@ -84,6 +85,59 @@ public class Boss {
         if (!visible){
             posX = -100;
             posY = 0;
+        }
+    }
+    public Bullet getBullet() {
+        return bullet;
+    }
+
+
+    public class Bullet {
+        private int x;
+        private int y;
+        public BufferedImage img;
+        private boolean destroy;
+
+        public Bullet(int x, int y) {
+            this.x = x;
+            this.y = y;
+            destroy = true;
+            File imageFile = new File("image\\bossn.png");
+            try {
+                img = ImageIO.read(imageFile);
+
+            } catch (IOException e) {
+                System.err.println("Blad odczytu obrazka");
+                e.printStackTrace();
+            }
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public void setY(int y) {
+            this.y = y;
+        }
+
+        public boolean isDestroy() {
+            return destroy;
+        }
+
+        public void setDestroy(boolean destroyed) {
+            this.destroy= destroyed;
+        }
+
+        public Rectangle rectangleBullet(){
+            return new Rectangle(x, y, 10,30);
         }
     }
 }

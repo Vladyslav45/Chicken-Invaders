@@ -111,7 +111,7 @@ public class StartWidok extends JFrame {
         JMenuItem exit = new JMenuItem("Exit");
         github.addActionListener(e -> {
             try {
-                Desktop.getDesktop().browse(new URI("https://github.com/Vladyslav45/Chicken-Invaders"));
+                Desktop.getDesktop().browse(new URI("https://github.com/dawwik/Chicken-Invaders"));
             } catch (IOException | URISyntaxException e1) {
                 e1.printStackTrace();
             }
